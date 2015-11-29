@@ -1,0 +1,8 @@
+# Dependency directory
+node_modules
+
+# Local environment variables
+.env
+
+# Windows folder config file
+Desktop.ini
