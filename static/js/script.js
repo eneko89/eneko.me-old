@@ -1,89 +1,161 @@
-var step = 0,
-    mq = window.matchMedia('(max-width: 1055px), (max-height: 480px)');
+//var mq = window.matchMedia('(max-width: 1055px), (max-height: 480px)');
 
+// DOM Elements.
+var content = document.getElementsByClassName('content')[0];
+    bio = document.getElementById('bio'),
+    skills = document.getElementById('skills'),
+    skillElems = document.querySelectorAll('#skills > span'),
+    skillsButton = document.querySelectorAll('.buttons > .skills')[0],
+    backButton = document.querySelectorAll('.buttons > .back')[0];
+
+// Fixed base string in the h1 tag.
+var base = 'I\'m Eneko, ';
+
+// Sentences that will rotate in h1 tag.
+var sentences = [
+  'software engineer',
+  'web developer',
+  'JS and Node hacker',
+  'computer geek',
+  'code craftsman',
+  'UX and UI designer',
+  'problem solver',
+  'basque citizen'
+];
+
+// Sentence rotation counter.
+var i = 0;
+
+// Rotate every 12 seconds.
+setInterval(function() {
+  i++;
+
+  // Rewrite the h1 tag with the console promot effect
+  // implemented in rewrite().
+  rewrite(document.getElementsByTagName('h1')[0],
+          base,
+          sentences[i % sentences.length]);
+}, 12000)
+
+// Show biography and buttons.
 showBio();
 
-if (mq.matches) {
-  document.getElementById('buttons').style.display = 'block';
-  setTimeout(showButtons, 2200);
-} else {
-  var clk = setInterval(function() {
-    switch(step) {
-      case 0:
-      showSkills();
-      break;
-      case 1:
-      hideSkills();
-      break;
-      case 2:
-      window.clearInterval(clk);
-      break;
-    }
-    step++;
-  }, 10000);
-}
+skillsButton.addEventListener('click', function(e) {
+  e.preventDefault();
+  showSkills();
+});
 
+backButton.addEventListener('click', function(e) {
+  e.preventDefault();
+  hideSkills();
+});
+
+/**
+ * Waits half a second and changes main content's opacity value to
+ * make it appear. A second and a half later, sets the .show class
+ * to the #bio element, which changes it's opacity and position.
+ * Property changes are animated through CSS3 transitions.
+ */
 function showBio() {
   setTimeout(function() {
-    var content = document.getElementsByClassName('content');
-    content[0].style.opacity = 1;
+    content.style.opacity = 1;
     setTimeout(function() {
-      var bio = document.getElementById('bio');
       bio.className = 'show';
-    }, 1500);
+    }, 1000);
   }, 500);
 }
 
 function showSkills() {
 
-  document.getElementById('bio').style.display = 'none';
-  document.getElementById('skills').style.display = 'block';
+  // Hide biography removing its .show class.
+  bio.className = '';
 
-  var skillElems = document.getElementById('skills').children;
+  // Wait 600ms while the dissapearing animation of the 
+  // biography completes.
+  setTimeout(function() {
+
+    // Hide bio and show skills.
+    bio.style.display = 'none';
+    skills.style.display = 'block';
+
+    // Start making skill spans appear with
+    // a random delay between 10 and 300ms.
+    for (var i = 0; i < skillElems.length; i++) {
+      var skill = skillElems[i];
+      showSkill(skill);
+    }
+
+    // Wait 600ms to let the previous animation complete and
+    // display the back button setting .show class to it.
+    setTimeout(function() {
+      backButton.className = 'back show';
+    }, 600);
+
+  }, 500);
 
   function showSkill(skill) {
     setTimeout(function() {
       skill.className = 'show';
-    }, Math.random() * 300);
-  }
-
-  for (var i = 0; i < skillElems.length; i++) {
-    var skill = skillElems[i];
-    showSkill(skill);
+    }, (Math.random() * 290) + 10);
   }
 }
 
 function hideSkills() {
-  var skillElems = document.getElementById('skills').children;
 
-  function hideSkill(skill) {
-    setTimeout(function() {
-      skill.className = '';
-    }, Math.random() * 300);
-  }
+  // Hide back button removing its .show class.
+  backButton.className = 'back';
 
+  // Start making skill spans dissappear with
+  // a random delay between 10 and 300ms.
   for (var i = 0; i < skillElems.length; i++) {
     var skill = skillElems[i];
     hideSkill(skill);
   }
 
-  setTimeout(showButtons, 800);
+  // Wait 650ms while the dissapearing animation of the skill
+  // spans completes.
+  setTimeout(function() {
+
+    // Hide skills and display bio.
+    skills.style.display = 'none';
+    bio.style.display = 'block';
+
+    // Add .show class to make biography appear. Wait 100ms
+    // first to avoid browser skipping the animation.
+    setTimeout(function() {
+      bio.className = 'show';
+    }, 100);
+  }, 650);
+
+  function hideSkill(skill) {
+    setTimeout(function() {
+      skill.className = '';
+    }, (Math.random() * 290) + 10);
+  }
 }
 
-function showButtons() {
-  document.getElementById('skills').style.display = 'none';
-  var buttonElems = document.getElementById('buttons');
-  buttonElems.style.display = 'block';
-  buttonElems = buttonElems.children;
+function rewrite(el, base, sentence) {
+  var oldSentence = el.innerHTML,
+      newSentence = base + sentence,
+      clk = setInterval(del, 60),
+      i = oldSentence.length;
 
-  function showButton(button, delay) {
-    setTimeout(function() {
-      button.className = 'show';
-    }, delay);
+  function del() {
+    i--;
+    if (base.length <= i) {
+      el.innerHTML = oldSentence.substring(0, i);
+    } else {
+      clearInterval(clk);
+      clk = setInterval(write, 60);
+    }
   }
 
-  for (var i = 0; i < buttonElems.length; i++) {
-    var button = buttonElems[i];
-    showButton(button, (i + 0.5) * 600);
+  function write() {
+    i++;
+    if (newSentence.length >= i) {
+      el.innerHTML = newSentence.substring(0, i);
+    } else {
+      clearInterval(clk);
+    }
   }
 }

@@ -15,20 +15,6 @@
   font-family: "fontello";
 }
 
-body {
-    background-image: url(images/bg.jpg);
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    background-color: #464646;
-    overflow: hidden;
-}
-
-html, body, .container {
-  height: 100%;
-}
-
 
 /* Reset */
 
@@ -42,10 +28,22 @@ html, body, h1, p, a, div, section {
 
 /* Basic */
 
-body { 
-  font: 18px/23px "Noto Sans", sans-serif;
-  color: #ffffff;
+html, body, .container {
+  height: 100%;
 }
+
+body {
+  font-family: "Noto Sans", sans-serif;
+  background-image: url(images/bg.jpg);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: #464646;
+  color: #ffffff;
+  overflow: hidden;
+}
+
 
 h1 {
   color: #efecec;
@@ -54,48 +52,18 @@ h1 {
   line-height: 50px;
   margin-top: 30px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-a {
-  color: #ffffff;
-}
-
-p {
-  margin: 0 0 15px 0;
-}
-
-strong {
-  font-weight: 700;
-}
-
-
-/* Layout */
-
-.navbar {
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  height: 40px;
-  z-index: 9999;
-  position: fixed;
-  display: none;
-}
-
-.inner {
+h1:after {
+  content: "_";
+  animation: blinking 1s infinite;
+  -webkit-animation: blinking 1s infinite;
+  -moz-animation: blinking 1s infinite;
+  -o-animation: blinking 1s infinite;
   position: relative;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.navbar a {
-  display: inline-block;
-  border: 1px solid #fff;
-  font-size: 14px;
-  line-height: 24px;
-  border-radius: 3px;
-  padding: 2px 15px;
-  text-decoration: none;
-  margin-top: 5px;
+  top: 1px;
+  left: 2px;
 }
 
 .container {
@@ -116,7 +84,7 @@ strong {
 
 /* Content */
 
-.content > #avatar {
+#avatar {
   width: 175px;
   height: 175px;
   margin: 0 auto;
@@ -126,87 +94,120 @@ strong {
   border: 5px solid white;
 }
 
-.content > #skills {
-  line-height: 2.8;
+#skills {
+  line-height: 3.6;
   text-align: center;
   display: none;
 }
 
-.content > #skills > span {
+#skills > span {
   background-color: #FCFCFC;
   padding: 6px 8px 7px 8px;
   font-size: 16px;
   color: #000000;
-  margin: 4px;
+  margin: 4px 5px 4px 5px;
   position: relative;
-  top: 60px;
-  transition: opacity 500ms cubic-bezier(0.215, 0.61, 0.355, 1),
+  top: 80px;
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.215, 0.61, 0.355, 1),
               top 500ms cubic-bezier(0.215, 0.61, 0.355, 1);
-  opacity: 0;
 }
 
-.content > #skills > span.show {
+#skills > span.show {
   top: 0px;
   opacity: 0.6;
 }
 
-.content > #bio {
-  text-align: center;
-  padding: 0 85px 0 85px;
-  line-height: 1.85;
-  font-size: 21px;
-  font-style: italic;
+#bio {
   opacity: 0;
-  top: 25px;
+  top: 32px;
   position: relative;
-  transition: opacity 300ms cubic-bezier(0.165, 0.84, 0.44, 1),
-              top 300ms cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: opacity 350ms cubic-bezier(0.165, 0.84, 0.44, 1),
+              top 350ms cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.content > #bio.show {
+#bio.show {
   top: 0px;
+  opacity: 1;
+}
+
+#bio > p {
+  text-align: center;
+  padding: 0 65px 0 65px;
+  line-height: 1.8;
+  font-size: 22px;
+  font-style: italic;
   opacity: 0.6;
 }
 
-.content > #buttons {
-  display: none;
+.buttons {
   text-align: center;
-  padding: 10px 216px 0 209px;
+  padding: 28px 70px 0 40px;
 }
 
-#buttons > a {
+.buttons > a {
+  color: #ffffff;
   display: inline-block;
   text-decoration: none;
-  width: 28.5%;
-  border: 3px solid white;
-  opacity: 0;
-  top: 20px;
+  width: 21%;
+  border: 3px solid white;;
   font-size: 18px;
-  padding: 12px 2px 12px 2px;
-  margin-left: 13px;
+  padding: 12px 2px 13px 2px;
+  margin-left: 22px;
   position: relative;
-  transition: opacity 500ms cubic-bezier(0.165, 0.84, 0.44, 1),
-              top 500ms cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-#buttons > a.show {
   opacity: 0.65;
-  top: 0px;
+  transition: opacity 200ms cubic-bezier(0.165, 0.84, 0.44, 1),
+              background-color 200ms cubic-bezier(0.165, 0.84, 0.44, 1),
+              border-color 200ms cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-#buttons > a > .icon {
+.buttons > a:hover,
+.buttons > a.back.show:hover {
+  opacity: 0.8;
+  color: white;
+}
+
+.buttons > a > .icon {
   font-family: "fontello";
-  font-size: 24px;
+  font-size: 21px;
   top: 2px;
   position: relative;
-  left: -4px;
+  left: -6px;
 }
 
-#buttons > a:last-child > .icon {
-  font-size: 20px;
-  top: 1px;
+.buttons > a.back > .icon {
+  left: -7px;
 }
 
+.buttons > a.back {
+  opacity: 0;
+  line-height: normal;
+}
+
+.buttons > a.back.show {
+  opacity: 0.65;
+}
+
+.buttons > a.skills:hover,
+.buttons > a.back:hover {
+  background-color: #26C281;
+  border-color: #26C281;
+}
+
+.buttons > a.github:hover {
+  background-color: #684572;
+  border-color: #6A4974;
+}
+
+.buttons > a.twitter:hover {
+  background-color: #59CBE0;
+  border-color: #59CBE0;
+}
+
+.buttons > a.mail:hover {
+  background-color: #DC4C4C;
+  border-color: #DC4C4C;
+}
 
 /* Media queries */
 
@@ -225,35 +226,35 @@ strong {
     height: auto;
   }
 
-  .content > #avatar {
+   #avatar {
     width: 105px;
     height: 105px;
     margin: 0.5% auto 0 auto;
     border: 4px solid white;
   }
 
-  .content > #bio {
+  #bio > p {
     padding: 0 3.5% 0 3.5%;
     text-align: justify;
     line-height: 1.65;
     font-size: 17px;
   }
 
-  .content > #skills {
+  #skills {
       line-height: 2.2;
   }
 
-  .content > #skills > span {
+  #skills > span {
     padding: 3px 4px 3px 4px;
     font-size: 12px;
     margin: 2px;
   }
 
-  .content > #buttons {
+  .buttons {
     padding: 6% 2.3% 0 2.3%;
   }
 
-  #buttons a {
+  .buttons a {
     width: 25%;
     border: 2px solid white;
     font-size: 15px;
@@ -262,11 +263,11 @@ strong {
     left: -2.5%;
   }
 
-  #buttons > a > .icon {
+  .buttons > a > .icon {
     left: 0;
   }
 
-  #buttons > a > .caption {
+  .buttons > a > .caption {
     display: none;
   }
 
@@ -293,11 +294,11 @@ strong {
     font-size: 14.5px;
   }
 
-  .content > #buttons {
+  .content > .buttons {
     padding: 2.1% 2.5% 0 2.5%;
   }
 
-  #buttons a {
+  .buttons a {
     font-size: 14px;
     padding: 4px;
     border: 2px solid white;
@@ -306,17 +307,72 @@ strong {
     left: -1%;
   }
 
-  #buttons > a > .icon {
+  .buttons > a > .icon {
       font-size: 19px;
       left: -3px;
   }
 
-  #buttons > a > .caption {
+  .buttons > a > .caption {
     display: inline;
   }
 
-  #buttons > a:last-child > .icon {
-    font-size: 17px;
+}
+
+
+/* Animations */
+
+@keyframes blinking {
+  0% {
+    opacity: 0;
   }
 
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes blinking {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes blinking {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@-o-keyframes blinking {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
