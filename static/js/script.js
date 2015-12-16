@@ -1,5 +1,3 @@
-//var mq = window.matchMedia('(max-width: 1055px), (max-height: 480px)');
-
 // DOM Elements.
 var content = document.getElementsByClassName('content')[0];
     bio = document.getElementById('bio'),
