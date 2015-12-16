@@ -219,9 +219,9 @@ h1:after {
 
   h1 {
     height: 80px;
-    font-size: 28px;
+    font-size: 30px;
     line-height: 40px;
-    margin: 9px 20px 3.5% 20px;
+    margin: 11px 20px 3.5% 20px;
   }
 
   .content {
@@ -239,10 +239,10 @@ h1:after {
   }
 
   #bio > p {
-    padding: 0 4.5% 0 4.5%;
+    padding: 0 4.7% 0 4.7%;
     text-align: justify;
     line-height: 1.65;
-    font-size: 17.5px;
+    font-size: 20px;
   }
 
   #skills {
@@ -271,10 +271,10 @@ h1:after {
 
   h1 {
     height: auto;
-    font-size: 22px;
+    font-size: 23px;
     line-height: 40px;
     margin-top: 4px;
-    margin-bottom: 6px;
+    margin-bottom: 7px;
   }
 
   #avatar {
