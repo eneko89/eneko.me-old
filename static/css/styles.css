@@ -41,7 +41,6 @@ body {
   background-size: cover;
   background-color: #464646;
   color: #ffffff;
-  overflow: hidden;
 }
 
 
@@ -213,15 +212,19 @@ h1:after {
 
 @media (max-width: 1055px) {
 
+  html {
+    overflow-y: hidden;
+  }
+
   body {
-    overflow: visible;
+    overflow: scroll;
   }
 
   h1 {
     height: 80px;
     font-size: 30px;
     line-height: 40px;
-    margin: 11px 20px 3.5% 20px;
+    margin: 11px 20px 4% 20px;
   }
 
   .content {
@@ -239,9 +242,17 @@ h1:after {
   }
 
   #bio > p {
-    padding: 0 4.7% 0 4.7%;
+    padding: 0 4.5% 0 4.5%;
     text-align: justify;
-    line-height: 1.65;
+    line-height: 1.8;
+    font-size: 17.2px;
+  }
+
+  .buttons > a {
+    font-size: 17px;
+  }
+
+  .buttons > a > .icon {
     font-size: 20px;
   }
 
@@ -271,16 +282,16 @@ h1:after {
 
   h1 {
     height: auto;
-    font-size: 23px;
+    font-size: 24px;
     line-height: 40px;
     margin-top: 4px;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
   }
 
   #avatar {
     width: 78px;
     height: 78px;
-    margin: 4% auto 0 auto;
+    margin: 3.5% auto 0 auto;
     border: 3px solid white;
   }
 
@@ -299,6 +310,7 @@ h1:after {
 
   #bio > p {
     font-size: 15.5px;
+    line-height: 1.6;
   }
 
 }
