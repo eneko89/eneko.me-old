@@ -274,6 +274,32 @@ h1:after {
     width: 88%;
     border: 2px solid white;
     margin: 0 0 20px;
+    opacity: 0.75;
+  }
+
+  .buttons > a.back.show {
+    opacity: 0.75;
+  }
+
+  .buttons > a.skills,
+  .buttons > a.back {
+    background-color: #26C281;
+    border-color: #26C281;
+  }
+
+  .buttons > a.github {
+    background-color: #684572;
+    border-color: #6A4974;
+  }
+
+  .buttons > a.twitter {
+    background-color: #59CBE0;
+    border-color: #59CBE0;
+  }
+
+  .buttons > a.mail {
+    background-color: #DC4C4C;
+    border-color: #DC4C4C;
   }
 
 }
@@ -310,7 +336,7 @@ h1:after {
 
   #bio > p {
     font-size: 15.5px;
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
 }
