@@ -218,6 +218,7 @@ h1:after {
 
   body {
     overflow: scroll;
+    padding: 0 4.5% 0 4.6%;
   }
 
   h1 {
@@ -237,12 +238,12 @@ h1:after {
    #avatar {
     width: 105px;
     height: 105px;
-    margin: 5.5% auto 0 auto;
+    margin: 6.3% auto 0 auto;
     border: 4px solid white;
   }
 
   #bio > p {
-    padding: 0 4.5% 0 4.5%;
+    padding: 0;
     text-align: justify;
     line-height: 1.8;
     font-size: 17.2px;
@@ -257,12 +258,13 @@ h1:after {
   }
 
   #skills {
-      line-height: 2.2;
+    line-height: 2.3;
+    text-align: justify;
   }
 
   #skills > span {
-    padding: 3px 4px 3px 4px;
-    font-size: 12px;
+    padding: 3px 6px 3px 6px;
+    font-size: 13px;
     margin: 2px;
   }
 
@@ -271,7 +273,7 @@ h1:after {
   }
 
   .buttons a {
-    width: 88%;
+    width: 96.5%;
     border: 2px solid white;
     margin: 0 0 20px;
     opacity: 0.75;
@@ -321,17 +323,25 @@ h1:after {
     border: 3px solid white;
   }
 
+  .buttons {
+    width: 102%;
+  }
+
   .buttons a {
     font-size: 14px;
     padding: 7px 0 9px 0;
     border: 2px solid white;
-    width: 20%;
+    width: 21.6%;
     margin-left: 2%;
-    left: -1%;
+    left: -2%;
   }
 
   .buttons > a > .icon {
       font-size: 19px;
+  }
+
+  .buttons > a.back {
+    width: 96%;
   }
 
   #bio > p {
