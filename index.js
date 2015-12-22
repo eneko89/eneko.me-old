@@ -28,10 +28,10 @@ if (app.get('env') === 'development') {
   app.use(morgan('dev'));
 }
 
-// Serve static assets.
-app.use(express.static('public', { maxAge:  30 * time.DAY }));
-
 // Serve static files.
+// TODO: When things settle down a little bit, set Cache-Control header
+// to a reasobale max-age value and start versioning static assets. By
+// now, changes are too frequent and it doesn't make much sense.
 app.use(express.static('static'));
 
 // Serve html.
