@@ -9,7 +9,19 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <link href='https://fonts.googleapis.com/css?family=Cantarell|Noto+Sans:400,400italic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="css/styles.css">
+
+  <!--Download script.js asynchronously and execute its content only when the DOM is ready-->
   <script src="js/script.js" defer></script>
+
+  <!--Google Analytics tracking code. Asynchronously downloads 'analytics.js' from Google-->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-24914429-1', 'auto');
+    ga('send', 'pageview');
+  </script>
 </head>
 <body>
   <header class="container">
@@ -20,7 +32,7 @@
         <p>Full stack web developer who's passionate about Node.js and JavaScript. Code hacker who loves the beauty of well architected, smart but yet readable code.  I'm also into User Experience and User Interface design. The rest of the time I read, practice sports and listen to rock music.</p>
         <div class="buttons">
           <a href="#" class="skills" >
-            <span class="icon">A</span><span class="caption"> Skills  </span>
+            <span class="icon">A</span><span class="caption"> Skills</span>
           </a>
           <a href="https://github.com/eneko89"  target="_blank" class="github">
             <span class="icon">B</span><span class="caption"> Github</span>
