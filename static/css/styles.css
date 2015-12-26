@@ -47,11 +47,10 @@ body {
 h1 {
   color: #efecec;
   font-family: "Cantarell", sans-serif;
-  font-size: 45px;
-  line-height: 50px;
-  margin-top: 30px;
+  font-size: 4.5vh;
+  margin-top: 2.3vh;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 2vh;
 }
 
 h1:after {
@@ -70,12 +69,12 @@ h1:after {
 }
 
 .content {
-  width: 1055px;
-  height: 485px;
+  width: 106.7vh;
+  height: 61vh;
+  margin: -30.5vh 0 0 -53.35vh;
   position: absolute;
-  top: 44%;
+  top: 51.2%;
   left: 50%;
-  margin: -229px 0 0 -527px;
   opacity: 0;
   transition: opacity 1200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -84,27 +83,27 @@ h1:after {
 /* Content */
 
 #avatar {
-  width: 175px;
-  height: 175px;
+  width: 17.7vh;
+  height: 17.7vh;
   margin: 0 auto;
   border-radius: 50%;
   background: url(images/av.png) no-repeat;
   background-size: 100%;
-  border: 5px solid white;
+  border: 0.6vh solid white;
 }
 
 #skills {
   line-height: 3.6;
+  font-size: 1.61vh;
   text-align: center;
   display: none;
 }
 
 #skills > span {
   background-color: #FCFCFC;
-  padding: 6px 8px 7px 8px;
-  font-size: 16px;
+  padding: 0.6vh 0.85vh 0.65vh 0.85vh;
   color: #000000;
-  margin: 4px 5px 4px 5px;
+  margin: 0.5vh;
   position: relative;
   top: 80px;
   opacity: 0;
@@ -132,16 +131,16 @@ h1:after {
 
 #bio > p {
   text-align: center;
-  padding: 0 65px 0 65px;
+  padding: 0 6.8vh 0 6.8vh;
   line-height: 1.8;
-  font-size: 22px;
+  font-size: 2.22vh;
   font-style: italic;
   opacity: 0.6;
 }
 
 .buttons {
   text-align: center;
-  padding: 28px 70px 0 40px;
+  padding: 2.9vh 6.55vh 0 4.15vh;
 }
 
 .buttons > a {
@@ -149,10 +148,10 @@ h1:after {
   display: inline-block;
   text-decoration: none;
   width: 21%;
-  border: 3px solid white;;
-  font-size: 18px;
-  padding: 12px 2px 13px 2px;
-  margin-left: 22px;
+  border: 0.35vh solid white;;
+  font-size: 1.8vh;
+  padding: 1.2vh 0.2vh 1.3vh 0.2vh;
+  margin-left: 2.2vh;
   position: relative;
   opacity: 0.65;
   transition: opacity 200ms cubic-bezier(0.165, 0.84, 0.44, 1),
@@ -168,10 +167,10 @@ h1:after {
 
 .buttons > a > .icon {
   font-family: "fontello";
-  font-size: 21px;
-  top: 2px;
+  font-size: 2.1vh;
   position: relative;
-  left: -6px;
+  top: 0.2vh;
+  left: -0.7vh;
 }
 
 .buttons > a.back > .icon {
@@ -208,6 +207,7 @@ h1:after {
   border-color: #DC4C4C;
 }
 
+
 /* Media queries */
 
 @media (max-width: 1055px) {
@@ -225,11 +225,11 @@ h1:after {
     height: 80px;
     font-size: 30px;
     line-height: 40px;
-    margin: 11px 20px 4% 20px;
+    margin: 11px 20px 13px 20px;
   }
 
   .content {
-    transform: translate(-50%, -44%);
+    transform: translate(-50%, -51.2%);
     margin: 0;
     width: 100%;
     height: 100%;
@@ -249,22 +249,14 @@ h1:after {
     font-size: 17.2px;
   }
 
-  .buttons > a {
-    font-size: 17px;
-  }
-
-  .buttons > a > .icon {
-    font-size: 20px;
-  }
-
   #skills {
-    line-height: 2.3;
+    line-height: 2.8;
+    font-size: 13px;
     text-align: justify;
   }
 
   #skills > span {
     padding: 3px 6px 3px 6px;
-    font-size: 13px;
     margin: 2px;
   }
 
@@ -274,9 +266,17 @@ h1:after {
 
   .buttons a {
     width: 96.5%;
+    font-size: 17px;
+    padding: 12px 2px 13px 2px;
     border: 2px solid white;
     margin: 0 0 20px;
     opacity: 0.75;
+  }
+
+  .buttons > a > .icon {
+    font-size: 20px;
+    top: 2px;
+    left: -6px;
   }
 
   .buttons > a.back.show {
