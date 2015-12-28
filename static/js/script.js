@@ -1,6 +1,7 @@
 // DOM Elements.
 var content = document.getElementsByClassName('content')[0];
     bio = document.getElementById('bio'),
+    h1 = document.getElementsByTagName('h1')[0],
     skills = document.getElementById('skills'),
     skillElems = document.querySelectorAll('#skills > span'),
     skillsButton = document.querySelectorAll('.buttons > .skills')[0],
@@ -24,20 +25,27 @@ var sentences = [
 // Sentence rotation counter.
 var i = 0;
 
-// Rotate every 12 seconds.
-setInterval(function() {
+/**
+ * Schedule rewrite of the h1 tag after 12 seconds with the
+ * console promot effect implemented in rewirte() function.
+ */
+function scheduleRewrite() {
   i++;
+  setTimeout(function() {
+    rewrite(h1,
+            base,
+            sentences[i % sentences.length],
+            scheduleRewrite);
+  }, 12000);
+}
 
-  // Rewrite the h1 tag with the console promot effect
-  // implemented in rewrite().
-  rewrite(document.getElementsByTagName('h1')[0],
-          base,
-          sentences[i % sentences.length]);
-}, 12000)
+// Wait 12 seconds before starting to rotate.
+setTimeout(scheduleRewrite, 12000);
 
 // Show biography and buttons.
 showBio();
 
+// Add listeners for the "Skills" and "Back" buttons.
 skillsButton.addEventListener('click', function(e) {
   e.preventDefault();
   showSkills();
@@ -132,7 +140,7 @@ function hideSkills() {
   }
 }
 
-function rewrite(el, base, sentence) {
+function rewrite(el, base, sentence, onEnd) {
   var oldSentence = el.innerHTML,
       newSentence = base + sentence,
       clk = setInterval(del, 60),
@@ -154,6 +162,9 @@ function rewrite(el, base, sentence) {
       el.innerHTML = newSentence.substring(0, i);
     } else {
       clearInterval(clk);
+      if (onEnd) {
+        onEnd();
+      }
     }
   }
 }
