@@ -1,9 +1,9 @@
 {
-  "name": "hello-world",
+  "name": "eneko.me",
   "private": "true",
-  "description": "Hello world",
+  "description": "My personal web page.",
   "author": "Eneko <contact@eneko.me>",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "index.js",
   "dependencies": {
     "express": "latest",
