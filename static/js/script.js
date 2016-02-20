@@ -36,11 +36,11 @@ function scheduleRewrite() {
             base,
             sentences[i % sentences.length],
             scheduleRewrite);
-  }, 12000);
+  }, 10000);
 }
 
 // Wait 12 seconds before starting to rotate.
-setTimeout(scheduleRewrite, 12000);
+setTimeout(scheduleRewrite, 10000);
 
 // Show biography and buttons.
 showBio();
@@ -152,7 +152,8 @@ function rewrite(el, base, sentence, onEnd) {
       el.innerHTML = oldSentence.substring(0, i);
     } else {
       clearInterval(clk);
-      clk = setInterval(write, 60);
+      var randTime = 65 + (Math.random() * 15);
+      clk = setInterval(write, randTime);
     }
   }
 
