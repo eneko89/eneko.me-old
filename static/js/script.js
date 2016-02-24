@@ -5,7 +5,9 @@ var content = document.getElementsByClassName('content')[0];
     skills = document.getElementById('skills'),
     skillElems = document.querySelectorAll('#skills > span'),
     skillsButton = document.querySelectorAll('.buttons > .skills')[0],
-    backButton = document.querySelectorAll('.buttons > .back')[0];
+    backButton = document.querySelectorAll('.buttons > .back')[0],
+    preview = document.getElementById('preview'),
+    bioButtons = document.querySelectorAll('#bio > .buttons > a');
 
 // Fixed base string in the h1 tag.
 var base = 'I\'m Eneko, ';
@@ -55,6 +57,11 @@ backButton.addEventListener('click', function(e) {
   e.preventDefault();
   hideSkills();
 });
+
+for (var i = 0; i < bioButtons.length; i++) {
+  bioButtons[i].addEventListener('mouseenter', showPreview);
+  bioButtons[i].addEventListener('mouseleave', hidePreview);
+}
 
 /**
  * Waits half a second and changes main content's opacity value to
@@ -167,5 +174,32 @@ function rewrite(el, base, sentence, onEnd) {
         onEnd();
       }
     }
+  }
+}
+
+
+var previewClk;
+
+function showPreview(e) {
+  var srcElem = e.srcElement;
+  expand(srcElem);
+
+  function expand(elem) {
+    previewClk = setTimeout(function() {
+      preview.className = elem.className;
+      elem.className = elem.className + ' expanded';
+    }, 1000);
+  }
+
+}
+
+function hidePreview(e) {
+  clearTimeout(previewClk);
+  var srcElem = e.srcElement;
+  collapse(srcElem);
+
+  function collapse(elem) {
+    preview.className = '';
+    elem.className = elem.className.split(' ')[0];
   }
 }
