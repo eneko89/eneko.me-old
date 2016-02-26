@@ -58,9 +58,13 @@ backButton.addEventListener('click', function(e) {
   hideSkills();
 });
 
-for (var i = 0; i < bioButtons.length; i++) {
-  bioButtons[i].addEventListener('mouseenter', showPreview);
-  bioButtons[i].addEventListener('mouseleave', hidePreview);
+// Attach preview listeners to anchors in '#bio > .buttons'
+// only for screens with viewports wider than 900px.
+if (window.matchMedia('(min-width: 900px)').matches) {
+  for (var i = 0; i < bioButtons.length; i++) {
+    bioButtons[i].addEventListener('mouseenter', showPreview);
+    bioButtons[i].addEventListener('mouseleave', hidePreview);
+  }
 }
 
 /**
@@ -147,6 +151,37 @@ function hideSkills() {
   }
 }
 
+/**
+ * Rewrite 'el' element periodically with a string composed by
+ * an always static 'base' string and slices of 'sentence' in
+ * order to create a writting efect. For example, if:
+ *
+ *   el.innerHTML = 'Hi! I\'m Eneko!
+ *   base = 'Hi!';
+ *   sentence = ' How\'s goin\'?';
+ *
+ * It'll write (el.innerHTML), with a period of a few millisecs:
+ *
+ *   'Hi! I\'m Eneko!'
+ *   'Hi! I\'m Eneko'
+ *   'Hi! I\'m Enek'
+ *   'Hi! I\'m Ene'
+ *
+ * And so forth. Then, it will do it forwards with the string
+ * provided in 'sentence'.
+ * 
+ * @param  {Element}   el        HTML Element
+ * 
+ * @param  {String}    base      Base string that does not
+ *                               change.
+ *                               
+ * @param  {String}    sentence  Sentence that will be sliced
+ *                               on each tick.
+ * 
+ * @param  {Function}  onEnd     Called when the rewrite ends
+ *                               (i.e. when the forwards and
+ *                               backwards animation ends).
+ */
 function rewrite(el, base, sentence, onEnd) {
   var oldSentence = el.innerHTML,
       newSentence = base + sentence,
