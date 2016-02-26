@@ -302,9 +302,12 @@ h1:after {
 
   .buttons {
     padding: 20px 0 0 0;
+    text-align: center;
   }
 
   .buttons a {
+    float: none!important;
+    display: inline-block;
     width: 96.5%;
     font-size: 17px;
     padding: 12px 2px 13px 2px;
