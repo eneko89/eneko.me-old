@@ -92,7 +92,7 @@ app.get('/tweets', function(req, res) {
 
 });
 
-// Resply with a 404 if nothing previously matches.
+// Reply with a 404 if nothing previously matches.
 app.use(function(req, res) {
   res.status(404).send('Not found!');
 })
