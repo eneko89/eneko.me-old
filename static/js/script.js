@@ -1,3 +1,11 @@
+/*!
+ * Copyright © 2015 Eneko Sanz <contact@eneko.me>
+ * File distributed under the MIT license.
+ * 
+ * Description:
+ * Client side script.
+ */
+
 // DOM Elements.
 var content = document.getElementsByClassName('content')[0];
     bio = document.getElementById('bio'),
@@ -48,13 +56,13 @@ setTimeout(scheduleRewrite, 10000);
 showBio();
 
 // Add listeners for the "Skills" and "Back" buttons.
-skillsButton.addEventListener('click', function(e) {
-  e.preventDefault();
+skillsButton.addEventListener('click', function(event) {
+  event.preventDefault();
   showSkills();
 });
 
-backButton.addEventListener('click', function(e) {
-  e.preventDefault();
+backButton.addEventListener('click', function(event) {
+  event.preventDefault();
   hideSkills();
 });
 
@@ -71,7 +79,7 @@ if (window.matchMedia('(min-width: 900px)').matches) {
  * Waits half a second and changes main content's opacity value to
  * make it appear. A second and a half later, sets the .show class
  * to the #bio element, which changes it's opacity and position.
- * Property changes are animated through CSS3 transitions.
+ * Property changes are animated through CSS transitions.
  */
 function showBio() {
   setTimeout(function() {
@@ -82,6 +90,9 @@ function showBio() {
   }, 500);
 }
 
+/**
+ * Triggers some CSS transitions to hide #bio and show #skills.
+ */
 function showSkills() {
 
   // Hide biography removing its .show class.
@@ -117,6 +128,9 @@ function showSkills() {
   }
 }
 
+/**
+ * Triggers some CSS transitions to hide #skills and show #bio.
+ */
 function hideSkills() {
 
   // Hide back button removing its .show class.
@@ -170,7 +184,7 @@ function hideSkills() {
  * And so forth. Then, it will do it forwards with the string
  * provided in 'sentence'.
  * 
- * @param  {Element}   el        HTML Element
+ * @param  {Element}   el        HTML DOM Element
  * 
  * @param  {String}    base      Base string that does not
  *                               change.
@@ -212,11 +226,19 @@ function rewrite(el, base, sentence, onEnd) {
   }
 }
 
-
+// Variable used to hold a reference to the last timeout set
+// by the showPreview() function below and which is used by
+// hidePreview().
 var previewClk;
 
-function showPreview(e) {
-  var srcElem = e.srcElement;
+/**
+ * Shows preview corresponding to the hovered button. Triggers
+ * some CSS transitions.
+ * 
+ * @param  {Event}  event  HTML DOM Event.
+ */
+function showPreview(event) {
+  var srcElem = event.srcElement;
   expand(srcElem);
 
   function expand(elem) {
@@ -228,9 +250,14 @@ function showPreview(e) {
 
 }
 
-function hidePreview(e) {
+/**
+ * Hides preview. Triggers some CSS transitions.
+ * 
+ * @param  {Event}  event  HTML DOM Event.
+ */
+function hidePreview(event) {
   clearTimeout(previewClk);
-  var srcElem = e.srcElement;
+  var srcElem = event.srcElement;
   collapse(srcElem);
 
   function collapse(elem) {
