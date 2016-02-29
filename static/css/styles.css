@@ -141,7 +141,7 @@ h1:after {
 #preview {
   height: 3.8vh;
   margin: 0 6.74vh 0 6.75vh;
-  opacity: 0.8;
+  opacity: 0;
   clear: both;
 }
 
@@ -198,6 +198,13 @@ h1:after {
 
 .buttons > a.back.show {
   opacity: 0.65;
+}
+
+#preview.skills,
+#preview.github,
+#preview.twitter,
+#preview.mail {
+  opacity: 0.8;
 }
 
 #preview.skills,
