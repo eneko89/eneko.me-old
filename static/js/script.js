@@ -203,6 +203,9 @@ function rewrite(el, base, sentence, onEnd) {
       clk = setInterval(del, 60),
       i = oldSentence.length;
 
+  /**
+   * Deletes content in h1 periodically until it reaches 'base'.
+   */
   function del() {
     i--;
     if (base.length <= i) {
@@ -214,6 +217,9 @@ function rewrite(el, base, sentence, onEnd) {
     }
   }
 
+  /**
+   * Wirtes 'sentence' in h1 periodically and calls onEnd().
+   */
   function write() {
     i++;
     if (newSentence.length >= i) {
@@ -234,7 +240,7 @@ function rewrite(el, base, sentence, onEnd) {
  * 
  * @param  {Function} onLoad  Called when the request completes
  *                            with the signature onLoad(err, res),
- *                            where 'res' is the response pasrsed
+ *                            where 'res' is the response parsed
  *                            as Object and 'err' null if request
  *                            succeeded. Else, it will contain an
  *                            HTTP errcode or -1.
@@ -264,7 +270,8 @@ function httpGet(url, onLoad) {
 // forth).
 var gitHubPreview,
     skillsPreview,
-    twitterPreview;
+    twitterPreview,
+    mailPreview;
 
 /**
  * Fetches eneko89 user's repositories from the GitHub API and
@@ -283,13 +290,29 @@ function getGithubPreview(done) {
   } else {
     httpGet(url, function(err, repos) {
       if (!err) {
-        console.log(repos);
-
-        // TODO: Implement preview markup creation.
-        gitHubPreview = 'PLACEHOLDER!';
+        gitHubPreview = '';
+        for (var i = 0; i < repos.length; i++) {
+          gitHubPreview += repoSpan(repos[i]);
+        }
         done(gitHubPreview);
       }
     });
+  }
+
+  /**
+   * Creates markup inside a <span> tag for a repo data object.
+   * 
+   * @param  {Object} repo  Repo data object (from Github API).
+   * 
+   * @return {String}       Generated repo markup.
+   */
+  function repoSpan(repo) {
+    return '<span>'
+            + anchor(repo.name, repo.html_url) + ' '
+            + repo.stargazers_count + ' '
+            + repo.forks + ' '
+            + repo.description + ' '
+            + '</span>';
   }
 } 
 
@@ -306,25 +329,95 @@ function getGithubPreview(done) {
  *                           and the Twitter API.    
  */
 function getTwitterPreview(done) {
-  var url = '/tweets?count=5';
+  var url = '/tweets?count=10';
 
   if (twitterPreview) {
     done(twitterPreview);
   } else {
     httpGet(url, function(err, tweets) {
       if (!err) {
-        console.log(tweets);
-
-        // TODO: Implement preview markup creation.
-        twitterPreview = 'PLACEHOLDER!';
+        twitterPreview = '';
+        for (var i = 0; i < tweets.length; i++) {
+          twitterPreview += tweetSpan(tweets[i]);
+        }
         done(twitterPreview);
       }
     });
   }
+
+  /**
+   * Creates markup inside a <span> tag for a tweet data object.
+   * 
+   * @param  {Object} repo  Tweet data object (from Twitter API).
+   * 
+   * @return {String}       Generated tweet markup.
+   */
+  function tweetSpan(tweet) {
+    return '<span>'
+            + tweetAnchor(formattedDate(tweet.created_at),
+                          tweet.id) + ' '
+            + tweet.retweet_count + ' '
+            + tweet.favorite_count + ' '
+            + anchorify(tweet.text) + ' '
+            + '</span>';
+  }
+
+  /**
+   * Creates an anchor linking to a @enekodev user's tweet from a
+   * tweet id and an anchor text.
+   *
+   * @param  {String}  text  Anchor text.
+   *
+   * @param  {String}  id    Tweet id.
+   * 
+   * @return {String}        Generated anchor tag.
+   */
+  function tweetAnchor(text, id) {
+    return anchor(text,
+                  'https://twitter.com/enekodev/status/' + id);
+  }
+
+  /**
+   * Formats Twitter API returned UTC string into 'DD/MM/YYYY hh:mm'
+   * date string format.
+   *
+   * @param  {String}  dateString  UTC Date string.
+   * 
+   * @return {String}              'DD/MM/YYYY hh:mm' format string.
+   */
+  function formattedDate(dateString) {
+    var date = new Date(dateString);
+
+    return prependZero(date.getDate()) + '/'
+            + prependZero(date.getMonth() + 1) + '/'
+            + date.getFullYear() + ' '
+            + prependZero(date.getHours()) + ':'
+            + prependZero(date.getMinutes());
+
+    /**
+     * Prepends zero to a numeric value if it's smaller than 10.
+     * 
+     * @param  {Numer}          num  Number.
+     * 
+     * @return {String|Number}       String with the number plus
+     *                               a leading zero if num < 10.
+     *                               Same numeric value otherwise.
+     *                               
+     */
+    function prependZero(num) {
+      return num < 10 ? '0' + num
+                      : num;
+    }
+  }
 }
 
 /**
- * TODO: Documentation.
+ * Generates the skills preview from the content in the #skills
+ * element. It does this only once, subsequent calls will return
+ * the cached markup.
+ * 
+ * @param  {Function}  done  Called on completion with generated
+ *                           markup: done(preview).
  */
 function getSkillsPreview(done) {
   if (!skillsPreview) {
@@ -338,11 +431,31 @@ function getSkillsPreview(done) {
 }
 
 /**
- * TODO: Documentation.
+ * Generates the mail preview markup. It does this only once,
+ * subsequent calls will return the cached markup.
+ * 
+ * @param  {Function}  done  Called on completion with generated
+ *                           markup: done(preview).
  */
 function getMailPreview(done) {
-  done('Click here to send me an e-mail or write to '
-        + 'contact@eneko.me or eneko@smartsea.io.');
+  if (!mailPreview) {
+    mailPreview = 'Click here to send me an e-mail or write to '
+                   + mailAnchor('contact@eneko.me') + ' or '
+                   + mailAnchor('eneko@smartsea.io') + '.';
+  }
+  done(mailPreview);
+
+  /**
+   * Creates an anchor with href='mailto:email' and the email
+   * itself as the anchor text.
+   *
+   * @param  {String}  email  E-mail address.
+   * 
+   * @return {String}         Generated anchor tag.
+   */
+  function mailAnchor(email) {
+    return anchor('mailto:' + email, email);
+  }
 }
 
 // Variable used to hold a reference to the last timeout set by
@@ -423,4 +536,33 @@ function hidePreview(event) {
  */
 function toUpperFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Creates an anchor tag from the URL and anchor text as params.
+ *
+ * @param  {String}  text  Anchor text.
+ * 
+ * @param  {String}  url   Anchor URL.
+ * 
+ * @return {String}        Generated anchor tag.
+ */
+function anchor(text, url) {
+  return '<a href="' + url + '">' + text + '</a>';
+}
+
+/**
+ * Looks for URLs in the source text and replaces them with anchor
+ * tags. If there are no links in the text, it does nothing.
+ * 
+ * @param  {String}  text  Source text.
+ * 
+ * @return {String}        New string with URLs in the source
+ *                         text replaced with anchor tags.
+ */
+function anchorify(text) {
+  var urlRegExp = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegExp, function(url) {
+      return anchor(url, url);
+  });
 }
