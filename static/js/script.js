@@ -454,7 +454,7 @@ function getMailPreview(done) {
    * @return {String}         Generated anchor tag.
    */
   function mailAnchor(email) {
-    return anchor('mailto:' + email, email);
+    return anchor(email, 'mailto:' + email);
   }
 }
 
