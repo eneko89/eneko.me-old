@@ -501,6 +501,9 @@ function showPreview(event) {
       // Insert generated preview
       previewElem.innerHTML = '<div>' + preview + '</div>';
 
+      // Start preview marquee.
+      startMarquee();
+
       // Wait and show the preview.
       previewClk = setTimeout(function() {
         previewElem.className = elem.className;
@@ -518,10 +521,63 @@ function showPreview(event) {
  */
 function hidePreview(event) {
   var elem = event.srcElement;
+
+  // Stop preview marquee.
+  stopMarquee();
+
+  // Cancel preview and animation timeout.
   previewCanceled = true;
   clearTimeout(previewClk);
+
+  // Hide preview.
   previewElem.className = '';
   elem.className = elem.className.split(' ')[0];
+}
+
+// Variable used to hold a reference to the last timeout set by
+// startMarquee() function below and used by stopMarquee().
+var marqueeClk;
+
+/**
+ * Set up and start CSS marquee on the child of #preview element.
+ */
+function startMarquee() {
+  var previewChild = previewElem.children[0],
+      childStyles = getComputedStyle(previewElem),
+      duration = previewChild.scrollWidth /
+                 previewElem.clientWidth * 7,
+      childMargin = parseFloat(childStyles.marginLeft);
+
+  // Initial delay in seconds.
+  var DELAY = 2;
+
+  // Set a CSS transition with the computed duration and constant
+  // initial delay.
+  previewChild.style.transition = 'left ' + duration + 's '
+                                   + 'linear ' + DELAY + 's';
+
+  // Set a negative left value that combined with the transition,
+  // absolute positioning and parent's hidden overflow creates the
+  // marquee effect.
+  previewChild.style.left = '-' + (previewChild.scrollWidth
+                                   + childMargin) + 'px';
+
+  // Set a timeout to restart the marquee when it ends until it's
+  // externally stopped by calling stopMarquee().
+  marqueeClk = setTimeout(function() {
+    stopMarquee();
+    startMarquee();
+  }, (duration * 1000) + DELAY * 1000);
+}
+
+/**
+ * Stop CSS marquee transition on the child of #preview element.
+ */
+function stopMarquee() {
+  var previewChild = previewElem.children[0];
+  clearTimeout(marqueeClk);
+  previewChild.style.transition = 'none';
+  previewChild.style.left = previewElem.clientWidth + 'px';
 }
 
 /**

@@ -139,10 +139,19 @@ h1:after {
 }
 
 #preview {
+  position: relative;
   height: 3.8vh;
   margin: 0 6.74vh 0 6.75vh;
   opacity: 0;
   clear: both;
+  font-size: 2.1vh;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#preview > div {
+  position: absolute;
+  left: 0;
 }
 
 .buttons {
