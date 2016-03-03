@@ -528,17 +528,26 @@ function hidePreview(event) {
 var marqueeClks = [];
 
 /**
- * Set up and start CSS marquee on the child of #preview element.
+ * Set up and start a CSS transition to create a marquee effect on
+ * the child of the #preview element.
  */
 function startMarquee() {
-  var previewChild = previewElem.children[0],
-      childStyles = getComputedStyle(previewElem),
-      duration = previewChild.scrollWidth /
-                 previewElem.clientWidth * 7,
-      childMargin = parseFloat(childStyles.marginLeft);
 
   // Initial delay in seconds.
   var DELAY = 2;
+
+  // Speed in seconds per previewElem's width. Transition duration
+  // is computed so that speed is constant, regardless of the size
+  // of previewElem or the amount of text in previewChild.
+  var SPEED = 7;
+
+  // Child of #preview (which is the element that will be animated)
+  // and styles to compute the transition duration.
+  var previewChild = previewElem.children[0],
+      childStyles = getComputedStyle(previewChild),
+      childLeft = parseFloat(childStyles.left),
+      duration = (previewChild.scrollWidth + childLeft) /
+                  previewElem.clientWidth * SPEED;
 
   // Set a CSS transition with the computed duration and constant
   // initial delay.
@@ -548,8 +557,7 @@ function startMarquee() {
   // Set a negative left value that combined with the transition,
   // absolute positioning and parent's hidden overflow creates the
   // marquee effect.
-  previewChild.style.left = '-' + (previewChild.scrollWidth
-                                   + childMargin) + 'px';
+  previewChild.style.left = '-' + previewChild.scrollWidth + 'px';
 
   // Set a timeout to restart the marquee when it ends until it's
   // externally stopped by calling stopMarquee().
