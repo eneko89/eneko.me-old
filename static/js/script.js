@@ -458,16 +458,9 @@ function getMailPreview(done) {
   }
 }
 
-// Variable used to hold a reference to the last timeout set by
+// Variable used to hold references to the last timeouts set by
 // the showPreview() function below and used by hidePreview().
-var previewClk;
-
-// Variable used to track if the preview has been canceled (the
-// mouse pointer left the button). The 'previewClk' variable is
-// not enough, because the preview could be canceled before the
-// timeout is set (i.e. while a preview getter is carrying out
-// an API request).
-var previewCanceled;
+var previewClks = [];
 
 /**
  * Shows preview corresponding to the hovered button. Triggers
@@ -483,60 +476,56 @@ function showPreview(event) {
   // Constant delay to show the preview after hovering a button.
   var DELAY = 1000;
 
-  // Reset cancel state.
-  previewCanceled = false;
-
   // Maybe a little tricky, but it simply calls a preview getter.
   window[getterName](function(preview) {
-    if (!previewCanceled) {
-      var realDelay = Date.now() - startTime,
-          remainingDelay = DELAY - realDelay;
+    var realDelay = Date.now() - startTime,
+        remainingDelay = DELAY - realDelay;
 
-      // If remainingDelay is negative, it has taken longer than a
-      // second to complete, so we must show preview immediately.
-      if (remainingDelay < 0) {
-        remainingDelay = 0;
-      }
-
-      // Insert generated preview
-      previewElem.innerHTML = '<div>' + preview + '</div>';
-
-      // Start preview marquee.
-      startMarquee();
-
-      // Wait and show the preview.
-      previewClk = setTimeout(function() {
-        previewElem.className = elem.className;
-        elem.className = elem.className + ' expanded';
-      }, remainingDelay);
+    // If remainingDelay is negative, it has taken longer than a
+    // second to complete, so we must show preview immediately.
+    if (remainingDelay < 0) {
+      remainingDelay = 0;
     }
+
+    // Insert generated preview.
+    previewElem.innerHTML = '<div>' + preview + '</div>';
+
+    // Start preview marquee.
+    startMarquee();
+
+    // Wait and show the preview.
+    previewClks.push(setTimeout(function() {
+      previewElem.className = elem.className;
+      elem.className = elem.className + ' expanded';
+    }, remainingDelay));
   });
 }
 
 /**
- * Hides preview and triggers some CSS transitions. If a timeout
- * has been previously scheduled by showPreview, cancels it first.
+ * Hides preview and triggers some CSS transitions. If any timeouts
+ * have been previously scheduled by showPreview, cancels them first.
  * 
  * @param  {Event}  event  HTML DOM Event.
  */
 function hidePreview(event) {
   var elem = event.srcElement;
 
+  // Clear any pending timeout.
+  while(previewClks.length) {
+    clearTimeout(previewClks.pop());
+  }
+
   // Stop preview marquee.
   stopMarquee();
-
-  // Cancel preview and animation timeout.
-  previewCanceled = true;
-  clearTimeout(previewClk);
 
   // Hide preview.
   previewElem.className = '';
   elem.className = elem.className.split(' ')[0];
 }
 
-// Variable used to hold a reference to the last timeout set by
+// Variable used to hold references to the last timeouts set by
 // startMarquee() function below and used by stopMarquee().
-var marqueeClk;
+var marqueeClks = [];
 
 /**
  * Set up and start CSS marquee on the child of #preview element.
@@ -564,10 +553,10 @@ function startMarquee() {
 
   // Set a timeout to restart the marquee when it ends until it's
   // externally stopped by calling stopMarquee().
-  marqueeClk = setTimeout(function() {
+  marqueeClks.push(setTimeout(function() {
     stopMarquee();
     startMarquee();
-  }, (duration * 1000) + DELAY * 1000);
+  }, (duration * 1000) + DELAY * 1000));
 }
 
 /**
@@ -575,9 +564,19 @@ function startMarquee() {
  */
 function stopMarquee() {
   var previewChild = previewElem.children[0];
-  clearTimeout(marqueeClk);
-  previewChild.style.transition = 'none';
-  previewChild.style.left = previewElem.clientWidth + 'px';
+
+  // Clear any pending timeout.
+  while(marqueeClks.length) {
+    clearTimeout(marqueeClks.pop());
+  }
+
+  // Disable CSS transition and relocate previewChild. If the first
+  // preview is cancelled early, previewElem could be still empty,
+  // so we check if extist first.
+  if (previewChild) {
+    previewChild.style.transition = 'none';
+    previewChild.style.left = previewElem.clientWidth + 'px';
+  }
 }
 
 /**
