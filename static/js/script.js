@@ -458,13 +458,20 @@ function getMailPreview(done) {
   }
 }
 
-// Variable used to hold references to the last timeouts set by
+// Variable used to hold a reference to the last timeout set by
 // the showPreview() function below and used by hidePreview().
-var previewClks = [];
+var previewClk;
+
+// Variable used to track cancellation state of previews, since
+// preview getters can carry out asynchronous tasks. For example:
+// { skills: false, github: true, twitter: false, mail: false }.
+var canceled = {};
 
 /**
- * Shows preview corresponding to the hovered button. Triggers
- * some CSS transitions.
+ * Shows hovered button's preview. Triggers some CSS transitions.
+ * 
+ * It stores a reference to the last timeout set in previewClk
+ * and sets cancellation state of the hovered button to false.
  * 
  * @param  {Event}  event  HTML DOM Event.
  */
@@ -476,44 +483,49 @@ function showPreview(event) {
   // Constant delay to show the preview after hovering a button.
   var DELAY = 1000;
 
+  // Reset element's preview cancellation state.
+  canceled[elem.className] = false;
+
   // Maybe a little tricky, but it simply calls a preview getter.
   window[getterName](function(preview) {
-    var realDelay = Date.now() - startTime,
-        remainingDelay = DELAY - realDelay;
+    if (!canceled[elem.className]) {
+      var realDelay = Date.now() - startTime,
+          remainingDelay = DELAY - realDelay;
 
-    // If remainingDelay is negative, it has taken longer than a
-    // second to complete, so we must show preview immediately.
-    if (remainingDelay < 0) {
-      remainingDelay = 0;
+      // If remainingDelay is negative, it has taken longer than a
+      // second to complete, so we must show preview immediately.
+      if (remainingDelay < 0) {
+        remainingDelay = 0;
+      }
+
+      // Insert generated preview.
+      previewElem.innerHTML = '<div>' + preview + '</div>';
+
+      // Start preview marquee.
+      startMarquee();
+
+      // Wait and show the preview.
+      previewClk = setTimeout(function() {
+        previewElem.className = elem.className;
+        elem.className = elem.className + ' expanded';
+      }, remainingDelay);
     }
-
-    // Insert generated preview.
-    previewElem.innerHTML = '<div>' + preview + '</div>';
-
-    // Start preview marquee.
-    startMarquee();
-
-    // Wait and show the preview.
-    previewClks.push(setTimeout(function() {
-      previewElem.className = elem.className;
-      elem.className = elem.className + ' expanded';
-    }, remainingDelay));
   });
 }
 
 /**
- * Hides preview and triggers some CSS transitions. If any timeouts
- * have been previously scheduled by showPreview, cancels them first.
+ * Hides preview and triggers some CSS transitions. If a timeout
+ * has been previously scheduled by showPreview, clears it first.
+ * 
+ * It also sets cancellation state or the hovered button to true.
  * 
  * @param  {Event}  event  HTML DOM Event.
  */
 function hidePreview(event) {
   var elem = event.srcElement;
 
-  // Clear any pending timeout.
-  while(previewClks.length) {
-    clearTimeout(previewClks.pop());
-  }
+  // Clear last timeout.
+  clearTimeout(previewClk);
 
   // Stop preview marquee.
   stopMarquee();
@@ -521,15 +533,21 @@ function hidePreview(event) {
   // Hide preview.
   previewElem.className = '';
   elem.className = elem.className.split(' ')[0];
+
+  // Cancel current preview if it's still in progress (a preview
+  // getter can carry out asynchronous tasks; that's why we need
+  // this flag).
+  canceled[elem.className] = true;
 }
 
-// Variable used to hold references to the last timeouts set by
+// Variable used to hold a reference to the last timeout set by
 // startMarquee() function below and used by stopMarquee().
-var marqueeClks = [];
+var marqueeClk;
 
 /**
  * Set up and start a CSS transition to create a marquee effect on
- * the child of the #preview element.
+ * the child of the #preview element. It also stores a reference to
+ * the last timeout set in marqueeClk.
  */
 function startMarquee() {
 
@@ -560,27 +578,27 @@ function startMarquee() {
   previewChild.style.left = '-' + previewChild.scrollWidth + 'px';
 
   // Set a timeout to restart the marquee when it ends until it's
-  // externally stopped by calling stopMarquee().
-  marqueeClks.push(setTimeout(function() {
+  // externally stopped by stopMarquee().
+  marqueeClk = setTimeout(function() {
     stopMarquee();
     startMarquee();
-  }, (duration * 1000) + DELAY * 1000));
+  }, (duration * 1000) + DELAY * 1000);
 }
 
 /**
- * Stop CSS marquee transition on the child of #preview element.
+ * Stop CSS marquee transition on the child of #preview element. If
+ * a timeout has been previously scheduled by startMarquee(), clears
+ * it first.
  */
 function stopMarquee() {
   var previewChild = previewElem.children[0];
 
-  // Clear any pending timeout.
-  while(marqueeClks.length) {
-    clearTimeout(marqueeClks.pop());
-  }
+  // Clear last timeout.
+  clearTimeout(marqueeClk);
 
   // Disable CSS transition and relocate previewChild. If the first
-  // preview is cancelled early, previewElem could be still empty,
-  // so we check if extist first.
+  // preview is canceled early, previewElem could be still empty, so
+  // we check if extist first.
   if (previewChild) {
     previewChild.style.transition = 'none';
     previewChild.style.left = previewElem.clientWidth + 'px';
