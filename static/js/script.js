@@ -233,8 +233,16 @@ function rewrite(el, base, sentence, onEnd) {
   }
 }
 
+// Variable to track request states and callbacks so that httpGet()
+// does not make a request to the same URL if the previous has not
+// finished.
+var requests = {};
+
 /**
  * Fetches data from a JSON API through HTTP GET (XMLHttpRequest).
+ *
+ * Requests to the same URL before the previous one completes are
+ * coalesced and their callbacks receive the same result.
  * 
  * @param  {String}   url     URL to hit.
  * 
@@ -248,21 +256,40 @@ function rewrite(el, base, sentence, onEnd) {
 function httpGet(url, onLoad) {
   var request = new XMLHttpRequest();
 
-  request.open('GET', url, true);
+  if (!requests[url]) {
 
-  request.onload = function() {
-    if (request.status >= 200 && request.status < 400) {
-      onLoad(null, JSON.parse(request.responseText));
-    } else {
-      onLoad(request.status);
-    }
-  };
+    requests[url] = { callbacks: [onLoad] };
 
-  request.onerror = function() {
-    request(-1);
-  };
+    request.open('GET', url, true);
 
-  request.send();
+    request.onload = function() {
+      var callbacks = requests[url].callbacks;
+      requests[url] = null;
+      
+      if (request.status >= 200 && request.status < 400) {
+        while (callbacks.length) {
+          callbacks.pop()(null, JSON.parse(request.responseText));
+        }
+      } else {
+        while (callbacks.length) {
+          callbacks.pop()(request.status);
+        }
+      }
+    };
+
+    request.onerror = function() {
+      var callbacks = requests[url].callbacks;
+      requests[url] = null;
+
+      while (callbacks.length) {
+        callbacks.pop()(-1);
+      }
+    };
+
+    request.send();
+  } else {
+    requests[url].callbacks.push(onLoad);
+  }
 }
 
 // Previews that will be lazy-loaded and generated on demand by
