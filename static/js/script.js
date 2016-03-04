@@ -554,10 +554,10 @@ function startMarquee() {
   // Initial delay in seconds.
   var DELAY = 2;
 
-  // Speed in seconds per previewElem's width. Transition duration
+  // Speed in previewElem's width per second. Transition duration
   // is computed so that speed is constant, regardless of the size
   // of previewElem or the amount of text in previewChild.
-  var SPEED = 7;
+  var SPEED = 0.1;
 
   // Child of #preview (which is the element that will be animated)
   // and styles to compute the transition duration.
@@ -565,7 +565,7 @@ function startMarquee() {
       childStyles = getComputedStyle(previewChild),
       childLeft = parseFloat(childStyles.left),
       duration = (previewChild.scrollWidth + childLeft) /
-                  previewElem.clientWidth * SPEED;
+                  previewElem.clientWidth / SPEED;
 
   // Set a CSS transition with the computed duration and constant
   // initial delay.
