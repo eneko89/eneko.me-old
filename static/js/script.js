@@ -413,7 +413,14 @@ function getTwitterPreview(done) {
    * @return {String}              'DD/MM/YYYY hh:mm' format string.
    */
   function formattedDate(dateString) {
-    var date = new Date(dateString);
+    var arr = dateString.split(' ');
+
+    // Parse date as UTC string (Twitter's format is not standard
+    // and some browser implementations of Date can't parse it).
+    var date = new Date(arr[1] + ' '
+                         + arr[2] + ', '
+                         + arr[5] + ' '
+                         + arr[3] + ' UTC');
 
     return prependZero(date.getDate()) + '/'
             + prependZero(date.getMonth() + 1) + '/'
