@@ -74,10 +74,12 @@ backButton.addEventListener('click', function(event) {
 // Attach preview listeners to anchors in '#bio > .buttons' only
 // in wide enough viewports (wider than 900px actually).
 if (isViewportBig) {
+  var hoverElems = [];
   for (var i = 0; i < bioButtons.length; i++) {
-    bioButtons[i].addEventListener('mouseenter', showPreview);
-    bioButtons[i].addEventListener('mouseleave', hidePreview);
+    hoverElems.push(bioButtons[i]);
   }
+  hoverElems.push(previewElem);
+  mergedHoverEvents(hoverElems, showPreview, hidePreview);
 }
 
 /**
@@ -492,6 +494,9 @@ function getMailPreview(done) {
   }
 }
 
+// Reference to the last bioButton hovered.
+var lastHovered;
+
 // Variable used to hold a reference to the last timeout set by
 // the showPreview() function below and used by hidePreview().
 var previewClk;
@@ -509,13 +514,16 @@ var canceled = {};
  * 
  * @param  {Event}  event  HTML DOM Event.
  */
-function showPreview(event) {
+function showPreview(event) { console.log('mouseenter');
   var elem = event.srcElement,
       getterName = 'get' + toUpperFirst(elem.className) + 'Preview',
       startTime = Date.now();
 
   // Constant delay to show the preview after hovering a button.
   var DELAY = 1000;
+
+  // Update the reference to the last button hovered.
+  lastHovered = elem;
 
   // Reset element's preview cancellation state.
   canceled[elem.className] = false;
@@ -535,13 +543,16 @@ function showPreview(event) {
       // Insert generated preview.
       previewElem.innerHTML = '<div>' + preview + '</div>';
 
-      // Start preview marquee.
-      startMarquee();
-
-      // Wait and show the preview.
+      // Wait remaining time until DELAY and...
       previewClk = setTimeout(function() {
+
+        // Show the preview.
         previewElem.className = elem.className;
+        previewElem.style.display = 'block';
         elem.className = elem.className + ' expanded';
+
+        // Start preview marquee.
+        startMarquee();
       }, remainingDelay);
     }
   });
@@ -555,8 +566,12 @@ function showPreview(event) {
  * 
  * @param  {Event}  event  HTML DOM Event.
  */
-function hidePreview(event) {
-  var elem = event.srcElement;
+function hidePreview(event) { console.log('mouseleave');
+
+  // If event.srcElement references previewElem and not a button,
+  // use the reference to the last hovered button.
+  var elem = event.srcElement === previewElem ? lastHovered
+                                              : event.srcElement;
 
   // Clear last timeout.
   clearTimeout(previewClk);
@@ -566,6 +581,7 @@ function hidePreview(event) {
 
   // Hide preview.
   previewElem.className = '';
+  previewElem.style.display = 'none';
   elem.className = elem.className.split(' ')[0];
 
   // Cancel current preview if it's still in progress (a preview
@@ -586,7 +602,7 @@ var marqueeClk;
 function startMarquee() {
 
   // Initial delay in seconds.
-  var DELAY = 2;
+  var DELAY = 1;
 
   // Speed in previewElem's width per second. Transition duration
   // is computed so that speed is constant, regardless of the size
@@ -636,6 +652,61 @@ function stopMarquee() {
   if (previewChild) {
     previewChild.style.transition = 'none';
     previewChild.style.left = previewElem.clientWidth + 'px';
+  }
+}
+
+/**
+ * Emulates 'mouseenter' and 'mouseleave' on a group of contiguous
+ * elements as if they were only one.
+ * 
+ * @param  {Element[]}  elems    Group of contiguous Elements.
+ * 
+ * @param  {Function}   onEnter  Called when the mouse enters the
+ *                               group of elements.
+ * 
+ * @param  {Function}   onLeave  Called when the mouse leaves the
+ *                               group of elements.
+ */
+function mergedHoverEvents(elems, onEnter, onLeave) {
+
+  // Variable to track hover state of each element of the group.
+  var mouseOver = [];
+
+  // Set 'mouseenter' and 'mouseleave' listeners to each element.
+  for (var i = 0; i < elems.length; i++) {
+
+    // Set all elements to false (not hovered) initially.
+    mouseOver[i] = false;
+
+    // If mouse enters an element and no previous one is hovered,
+    // fire onEnter().
+    elems[i].addEventListener('mouseenter', function(event) {
+      if (mouseOver.indexOf(true) === -1) {
+        onEnter(event);
+      }
+
+      var index = elems.indexOf(event.srcElement);
+      mouseOver[index] = true;
+    });
+
+    // If mouse enters an element and no previous one is hovered,
+    // fire onLeave(). But...
+    elems[i].addEventListener('mouseleave', function(event) {
+
+      // ...here is the catch. Setting an small timeout makes next
+      // element's mouseenter event arrive before previous elem's
+      // mouseleave, making possible to know if the element left
+      // or entered the group.
+      setTimeout(function() {
+        var index = elems.indexOf(event.srcElement);
+        mouseOver[index] = false;
+
+        if (mouseOver.indexOf(true) === -1) {
+          onLeave(event);
+        }
+      }, 0);
+
+    });
   }
 }
 
