@@ -74,12 +74,10 @@ backButton.addEventListener('click', function(event) {
 // Attach preview listeners to anchors in '#bio > .buttons' only
 // in wide enough viewports (wider than 900px actually).
 if (isViewportBig) {
-  var hoverElems = [];
   for (var i = 0; i < bioButtons.length; i++) {
-    hoverElems.push(bioButtons[i]);
+    mergedHoverEvents([bioButtons[i], previewElem],
+                      showPreview, hidePreview, true);
   }
-  hoverElems.push(previewElem);
-  mergedHoverEvents(hoverElems, showPreview, hidePreview);
 }
 
 /**
@@ -494,7 +492,7 @@ function getMailPreview(done) {
   }
 }
 
-// Reference to the last bioButton hovered.
+// Reference to the last hovered bioButton.
 var lastHovered;
 
 // Variable used to hold a reference to the last timeout set by
@@ -514,8 +512,8 @@ var canceled = {};
  * 
  * @param  {Event}  event  HTML DOM Event.
  */
-function showPreview(event) { console.log('mouseenter');
-  var elem = event.srcElement,
+function showPreview(event) {
+  var elem = event.srcElement || event.target,
       getterName = 'get' + toUpperFirst(elem.className) + 'Preview',
       startTime = Date.now();
 
@@ -566,12 +564,12 @@ function showPreview(event) { console.log('mouseenter');
  * 
  * @param  {Event}  event  HTML DOM Event.
  */
-function hidePreview(event) { console.log('mouseleave');
+function hidePreview(event) {
 
-  // If event.srcElement references previewElem and not a button,
-  // use the reference to the last hovered button.
-  var elem = event.srcElement === previewElem ? lastHovered
-                                              : event.srcElement;
+  // If source element references previewElem, use the reference
+  // to the last hovered button.
+  var elem = event.srcElement || event.target;
+  elem = elem === previewElem ? lastHovered : elem;
 
   // Clear last timeout.
   clearTimeout(previewClk);
@@ -655,38 +653,66 @@ function stopMarquee() {
   }
 }
 
+// Variable used to hold a reference to the id of the currently
+// hovered group if exclusive = true in mergedHoverEvents().
+var hoverGroupId = null;
+
 /**
  * Emulates 'mouseenter' and 'mouseleave' on a group of contiguous
  * elements as if they were only one.
  * 
- * @param  {Element[]}  elems    Group of contiguous Elements.
+ * @param  {Element[]}  elems        Group of contiguous Elements.
  * 
- * @param  {Function}   onEnter  Called when the mouse enters the
- *                               group of elements.
+ * @param  {Function}   onEnter      Called when the mouse enters
+ *                                   the group of elements.
  * 
- * @param  {Function}   onLeave  Called when the mouse leaves the
- *                               group of elements.
+ * @param  {Function}   onLeave      Called when the mouse leaves
+ *                                   the group of elements.
+ *
+ * @param  {Boolean}    [exclusive]  If set to true, two element
+ *                                   groups cannot be hovered at
+ *                                   the same time. In practice,
+ *                                   this means that groups with
+ *                                   elems in common won't fire
+ *                                   more than once when elems
+ *                                   in common are entered/left.
+ *                                   Instead, first added group
+ *                                   takes precedence. Defaults
+ *                                   to false.
  */
-function mergedHoverEvents(elems, onEnter, onLeave) {
+function mergedHoverEvents(elems, onEnter, onLeave, exclusive) {
 
   // Variable to track hover state of each element of the group.
   var mouseOver = [];
 
+  // Variable to tell element groups apart if exlusive = true.
+  var groupId = exclusive ? Math.random().toString(36).slice(-5)
+                          : null;
+
   // Set 'mouseenter' and 'mouseleave' listeners to each element.
   for (var i = 0; i < elems.length; i++) {
 
-    // Set all elements to false (not hovered) initially.
+    // Set element's mouseOver to false (not hovered) initially.
     mouseOver[i] = false;
 
     // If mouse enters an element and no previous one is hovered,
     // fire onEnter().
     elems[i].addEventListener('mouseenter', function(event) {
-      if (mouseOver.indexOf(true) === -1) {
-        onEnter(event);
+
+      if (hoverGroupId === null) {
+        hoverGroupId = groupId
       }
 
-      var index = elems.indexOf(event.srcElement);
-      mouseOver[index] = true;
+      if (groupId === hoverGroupId) {
+        if (mouseOver.indexOf(true) === -1) {
+          hoverGroupId = groupId;
+          onEnter(event);
+        }
+
+        var index = elems.indexOf(event.srcElement
+                                  || event.target);
+        mouseOver[index] = true;
+      }
     });
 
     // If mouse enters an element and no previous one is hovered,
@@ -698,10 +724,13 @@ function mergedHoverEvents(elems, onEnter, onLeave) {
       // mouseleave, making possible to know if the element left
       // or entered the group.
       setTimeout(function() {
-        var index = elems.indexOf(event.srcElement);
+        var index = elems.indexOf(event.srcElement
+                                  || event.target);
         mouseOver[index] = false;
 
-        if (mouseOver.indexOf(true) === -1) {
+        if (mouseOver.indexOf(true) === -1
+            && groupId === hoverGroupId) {
+          hoverGroupId = null;
           onLeave(event);
         }
       }, 0);
