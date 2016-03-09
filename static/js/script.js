@@ -233,7 +233,7 @@ function rewrite(el, base, sentence, onEnd) {
   }
 }
 
-// Variable to track request states and callbacks so that httpGet()
+// Variable to track requests and their callbacks so that httpGet()
 // does not make a request to the same URL if the previous has not
 // finished.
 var requests = {};
@@ -663,22 +663,20 @@ var hoverGroupId = null;
  * 
  * @param  {Element[]}  elems        Group of contiguous Elements.
  * 
- * @param  {Function}   onEnter      Called when the mouse enters
- *                                   the group of elements.
+ * @param  {Function}   onEnter      Called when mouse enters the
+ *                                   group of elements.
  * 
- * @param  {Function}   onLeave      Called when the mouse leaves
- *                                   the group of elements.
+ * @param  {Function}   onLeave      Called when mouse leaves the
+ *                                   group of elements.
  *
- * @param  {Boolean}    [exclusive]  If set to true, two element
- *                                   groups cannot be hovered at
- *                                   the same time. In practice,
- *                                   this means that groups with
- *                                   elems in common won't fire
- *                                   more than once when elems
- *                                   in common are entered/left.
- *                                   Instead, first added group
- *                                   takes precedence. Defaults
- *                                   to false.
+ * @param  {Boolean}    [exclusive]  If true, element groups cannot
+ *                                   be hovered simultaneously. This
+ *                                   means that in groups with elems
+ *                                   in common, it won't notify all
+ *                                   groups when entering or leaving
+ *                                   the common elem, only the group
+ *                                   defined in the first place. It
+ *                                   defaults to false.
  */
 function mergedHoverEvents(elems, onEnter, onLeave, exclusive) {
 
