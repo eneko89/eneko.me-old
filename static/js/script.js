@@ -513,7 +513,7 @@ var canceled = {};
  * @param  {Event}  event  HTML DOM Event.
  */
 function showPreview(event) {
-  var elem = event.srcElement || event.target,
+  var elem = event.target,
       getterName = 'get' + toUpperFirst(elem.className) + 'Preview',
       startTime = Date.now();
 
@@ -568,8 +568,8 @@ function hidePreview(event) {
 
   // If source element references previewElem, use the reference
   // to the last hovered button.
-  var elem = event.srcElement || event.target;
-  elem = elem === previewElem ? lastHovered : elem;
+  var elem = event.target === previewElem ? lastHovered
+                                          : event.target;
 
   // Clear last timeout.
   clearTimeout(previewClk);
@@ -655,7 +655,7 @@ function stopMarquee() {
 
 // Variable used to hold a reference to the id of the currently
 // hovered group if exclusive = true in mergedHoverEvents().
-var hoverGroupId = null;
+var hoveredGroupId = null;
 
 /**
  * Emulates 'mouseenter' and 'mouseleave' on a group of contiguous
@@ -687,52 +687,84 @@ function mergedHoverEvents(elems, onEnter, onLeave, exclusive) {
   var groupId = exclusive ? Math.random().toString(36).slice(-5)
                           : null;
 
+  // Flag that tells if a 'mouseenter' handler must be queued in
+  // the browser's event queue or executed immediately.
+  var queueMouseEnter = false;
+
   // Set 'mouseenter' and 'mouseleave' listeners to each element.
   for (var i = 0; i < elems.length; i++) {
 
-    // Set element's mouseOver to false (not hovered) initially.
+    // Set all element's mouseOver state to false (not hovered)
+    // initially.
     mouseOver[i] = false;
 
     // If mouse enters an element and no previous one is hovered,
     // fire onEnter().
     elems[i].addEventListener('mouseenter', function(event) {
 
-      if (hoverGroupId === null) {
-        hoverGroupId = groupId
+      // Setting a timeout with a delay of zero here avoids losing
+      // mouseenters on groups when the exclusive mode is enabled.
+      // This is because the handler is not immediately executed,
+      // but scheduled in the browser's event queue.
+      if (queueMouseEnter) {
+        setTimeout(function() {
+          _mouseEnter();
+        }, 0);
+      } else {
+        _mouseEnter();
+        queueMouseEnter = false;
       }
 
-      if (groupId === hoverGroupId) {
-        if (mouseOver.indexOf(true) === -1) {
-          hoverGroupId = groupId;
-          onEnter(event);
+      function _mouseEnter() {
+
+        // Set the reference to currently hovered group.
+        if (hoveredGroupId === null) {
+          hoveredGroupId = groupId;
         }
 
-        var index = elems.indexOf(event.srcElement
-                                  || event.target);
-        mouseOver[index] = true;
+        // Call onEnter if there is no hovered element within the
+        // group.
+        if (groupId === hoveredGroupId) {
+          if (mouseOver.indexOf(true) === -1) {
+            onEnter(event);
+          }
+
+          // Update element's mouseOver state.
+          var index = elems.indexOf(event.target);
+          mouseOver[index] = true;
+        }
       }
     });
 
     // If mouse enters an element and no previous one is hovered,
-    // fire onLeave(). But...
+    // fire onLeave().
     elems[i].addEventListener('mouseleave', function(event) {
 
-      // ...here is the catch. Setting an small timeout makes next
+      // Setting a timeout with a delay of zero here makes next
       // element's mouseenter event arrive before previous elem's
       // mouseleave, making possible to know if the element left
-      // or entered the group.
+      // or entered the group. This is because the function is not
+      // immediately executed, but scheduled in the browser event
+      // queue.
       setTimeout(function() {
-        var index = elems.indexOf(event.srcElement
-                                  || event.target);
+
+        // Update element's mouseOver state.
+        var index = elems.indexOf(event.target);
         mouseOver[index] = false;
 
+        // Call onLeave if there is no hovered element within the
+        // group.
         if (mouseOver.indexOf(true) === -1
-            && groupId === hoverGroupId) {
-          hoverGroupId = null;
+            && groupId === hoveredGroupId) {
+
+          // Reset the reference to currently hovered group.
+          hoveredGroupId = null;
+
+          // Make the next 'mouseenter' handler queue itself.
+          queueMouseEnter = true;
           onLeave(event);
         }
       }, 0);
-
     });
   }
 }
