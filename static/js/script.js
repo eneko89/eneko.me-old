@@ -712,8 +712,9 @@ function mergedHoverEvents(elems, onEnter, onLeave, exclusive) {
         }, 0);
       } else {
         _mouseEnter();
-        queueMouseEnter = false;
       }
+
+      queueMouseEnter = false;
 
       function _mouseEnter() {
 
