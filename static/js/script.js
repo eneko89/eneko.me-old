@@ -812,3 +812,72 @@ function anchorify(text) {
       return anchor(url, url);
   });
 }
+
+/**
+ * Writes an easter egg to the console with a greeting, some ASCII
+ * art and info about this project, just for fun :D.
+ */
+function consoleSwag() {
+
+  // ASCII art FTW!
+  var asciiArt = ['%c     ___     ___ ___       ',
+                  '%c    /  /|   /  /|\\  \\      ',
+                  '%c   /  / /  /  //\\ \\  \\     ',
+                  '%c  /  / /  /  //  \\ \\  \\    ',
+                  '%c |\\  \\/  /  //    \\/  /|   ',
+                  '%c \\ \\  \\ /_ //     /  //    ',
+                  '%c  \\ \\__\\__|/     /_ //     ',
+                  '%c   \\|__|        |__|/      ',
+                  '%c '];
+
+  // Message to show in the console next to the ASCII drawing.
+  var msg = 
+    ['%c ',
+     '%cHi there, nice to meet you! %cIf you arrived here you\'re',
+     '%cprobably a web developer like me. You can find the code',
+     '%cin %chttps://www.github.com/eneko89/eneko.me%c. It supports',
+     '%cIE9+ and is crafted without using any client-side libs,',
+     '%cembracing the latest CSS3/HTML5 and web API standards.',
+     '%c ',
+     '%cHiring?%c Write me to %ccontact@eneko.me%c!',
+     '%c'];
+
+  // CSS console style definitions.
+  var styleDefs = { asciiArt: 'color: #007EDB',
+                    underline: 'color: #228FDF; '
+                                + 'text-decoration: underline' };
+
+  var result = '',
+      styles = [];
+
+  for (var i = 0; i < asciiArt.length; i++) {
+
+    // Merge asciiArt and msg.
+    result += asciiArt[i] + msg[i] + '\n';
+
+    // Add styles. Lines 1, 3 and 7 have special ones.
+    switch (i) {
+      case 1:
+        styles.push(styleDefs.asciiArt, styleDefs.bold,
+                    styleDefs.msg);
+        break;
+      case 3:
+        styles.push(styleDefs.asciiArt, styleDefs.msg,
+                    styleDefs.underline, styleDefs.msg);
+        break;
+      case 7:
+        styles.push(styleDefs.asciiArt, styleDefs.bold,
+                    styleDefs.msg, styleDefs.underline,
+                    styleDefs.msg);
+        break;
+      default:
+        styles.push(styleDefs.asciiArt, styleDefs.msg);
+    }
+
+  // Add result to the first position of the styles array so it can
+  // be applied to console.log, which receives the string with '%c'
+  // format specifiers as the first param, followed by the  style
+  // params to apply in those placeholders in order.
+  styles.unshift(result);
+  console.log.apply(console, styles);
+}
