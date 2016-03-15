@@ -71,6 +71,9 @@ backButton.addEventListener('click', function(event) {
   hideSkills();
 });
 
+// Write an easter egg to the console with some info & ASCII art.
+consoleSwag();
+
 // Attach preview listeners to anchors in '#bio > .buttons' only
 // in wide enough viewports (wider than 900px actually).
 if (isViewportBig) {
@@ -844,6 +847,8 @@ function consoleSwag() {
 
   // CSS console style definitions.
   var styleDefs = { asciiArt: 'color: #007EDB',
+                    msg: 'color: #4E4E4E',
+                    bold: 'font-weight: 600; color: #2E2E2E',
                     underline: 'color: #228FDF; '
                                 + 'text-decoration: underline' };
 
@@ -873,6 +878,7 @@ function consoleSwag() {
       default:
         styles.push(styleDefs.asciiArt, styleDefs.msg);
     }
+  }
 
   // Add result to the first position of the styles array so it can
   // be applied to console.log, which receives the string with '%c'
