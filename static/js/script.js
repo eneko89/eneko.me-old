@@ -389,7 +389,7 @@ function getTwitterPreview(done) {
   function tweetSpan(tweet) {
     return '<span>'
             + tweetAnchor(formattedDate(tweet.created_at),
-                          tweet.id) + ' '
+                          tweet.id_str) + ' '
             + tweet.retweet_count + ' '
             + tweet.favorite_count + ' '
             + anchorify(tweet.text) + ' '
