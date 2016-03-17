@@ -337,11 +337,15 @@ function getGithubPreview(done) {
    * @return {String}       Generated repo markup.
    */
   function repoSpan(repo) {
-    return '<span>'
-            + anchor(repo.name, repo.html_url) + ' '
-            + repo.stargazers_count + ' '
-            + repo.forks + ' '
-            + repo.description + ' '
+    return '<span class="repo">'
+                + anchor(repo.name, repo.html_url)
+                + '<span class="icon">G</span>'
+                + repo.stargazers_count
+                + '<span class="icon">F</span>'
+                + repo.forks
+                + '<span class="description">'
+                    + repo.description
+                + '</span>'
             + '</span>';
   }
 } 
@@ -461,7 +465,7 @@ function getSkillsPreview(done) {
     skillsPreview = '';
     for (var i = 0; i < skillElems.length; i++) {
       var skill = skillElems[i];
-      skillsPreview += skill.innerHTML + ' ';
+      skillsPreview += '<span>' + skill.innerHTML + '</span>';
     }
   }
   done(skillsPreview);
