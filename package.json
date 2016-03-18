@@ -9,7 +9,13 @@
     "express": "latest",
     "morgan": "latest",
     "compression": "latest",
-    "simple-time": "latest"
+    "simple-time": "latest",
+    "request": "latest",
+    "oauth-1.0a": "latest"
+  },
+  "devDependencies": {
+    "gulp": "latest",
+    "dotenv": "latest"
   },
   "engines": {
     "node": "latest",
