@@ -200,8 +200,23 @@ h1:after {
   font-size: 2vh;
 }
 
+#preview.skills > div > span::after {
+  content: "·";
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 1.3vh 0 1.3vh;
+}
+
 #preview.github > div > .repo > .description {
   color: rgba(255,255,255,0.7);
+  padding: 0 2vh 0 1vh;
+}
+
+#preview.twitter > div > .tweet > .text,
+#preview.twitter > div > .tweet > .text > a {
+  color: rgba(255,255,255,0.89);
+}
+
+#preview.twitter > div > .tweet > .text {
   padding: 0 2vh 0 1vh;
 }
 
@@ -210,20 +225,34 @@ h1:after {
   padding-right: 1vh;
 }
 
-#preview.github > div > .repo > .icon {
+#preview.twitter > div > .tweet > a {
+  color: white;
+  padding-right: 1vh;
+}
+
+#preview.github > div > .repo > .icon,
+#preview.twitter > div > .tweet > .icon {
   padding-right: 0.6vh;
   font-size: 1.8vh;
 }
 
-#preview.github > div > .repo > .icon:nth-of-type(2) {
+#preview.github > div > .repo > .icon:nth-of-type(2),
+#preview.twitter > div > .tweet > .icon:nth-of-type(2) {
   padding-left: 1vh;
   font-size: 1.9vh;
 }
 
-#preview.skills > div > span::after {
-  content: "·";
-  opacity: 0.5;
-  padding: 0 1.3vh 0 1.3vh;
+#preview.twitter > div > .tweet > .icon:nth-of-type(2) {
+  position: relative;
+  top: -1px;
+}
+
+#preview.mail > div {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#preview.mail > div a {
+  color: white;
 }
 
 .buttons {

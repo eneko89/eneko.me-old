@@ -387,12 +387,16 @@ function getTwitterPreview(done) {
    * @return {String}       Generated tweet markup.
    */
   function tweetSpan(tweet) {
-    return '<span>'
-            + tweetAnchor(formattedDate(tweet.created_at),
-                          tweet.id_str) + ' '
-            + tweet.retweet_count + ' '
-            + tweet.favorite_count + ' '
-            + anchorify(tweet.text) + ' '
+    return '<span class="tweet">'
+                + tweetAnchor(formattedDate(tweet.created_at),
+                              tweet.id_str)
+                + '<span class="icon">G</span>'
+                + tweet.favorite_count
+                + '<span class="icon">H</span>'
+                + tweet.retweet_count
+                + '<span class="text">'
+                    + anchorify(tweet.text)
+                + '</span>'
             + '</span>';
   }
 
@@ -412,12 +416,11 @@ function getTwitterPreview(done) {
   }
 
   /**
-   * Formats Twitter API returned UTC string into 'DD/MM/YYYY hh:mm'
-   * date string format.
+   * Formats Twitter's date string into 'DD/MM/YYYY hh:mm' format.
    *
-   * @param  {String}  dateString  UTC Date string.
+   * @param  {String}  dateString  Twitter's date string.
    * 
-   * @return {String}              'DD/MM/YYYY hh:mm' format string.
+   * @return {String}              'DD/MM/YYYY hh:mm' date.
    */
   function formattedDate(dateString) {
     var arr = dateString.split(' ');
@@ -612,7 +615,7 @@ function startMarquee() {
   // Speed in previewElem's width per second. Transition duration
   // is computed so that speed is constant, regardless of the size
   // of previewElem or the amount of text in previewChild.
-  var SPEED = 0.1;
+  var SPEED = 0.08;
 
   // Child of #preview (which is the element that will be animated)
   // and styles to compute the transition duration.
