@@ -17,9 +17,9 @@ var content = document.getElementsByClassName('content')[0];
     previewElem = document.getElementById('preview'),
     bioButtons = document.querySelectorAll('#bio > .buttons > a');
 
-// True if the viewport is wide enough for previews in '#bio > .buttons',
-// which should be available only for wide viewports & non touch devices
-// that can handle properly mouseenter and mouseleave. 
+// True if the viewport is wide enough for previews of the anchor buttons
+// in '#bio > .buttons', which should be available only for wide viewports
+// & non touch devices that can handle properly mouseenter and mouseleave.
 var isViewportBig = window.matchMedia('(min-width: 900px)').matches;
 
 // Fixed base string in the h1 tag.
@@ -71,9 +71,6 @@ backButton.addEventListener('click', function(event) {
   hideSkills();
 });
 
-// Write an easter egg to the console with some info & ASCII art.
-consoleSwag();
-
 // Attach preview listeners to anchors in '#bio > .buttons' only
 // in wide enough viewports (wider than 900px actually).
 if (isViewportBig) {
@@ -81,6 +78,11 @@ if (isViewportBig) {
     mergedHoverEvents([bioButtons[i], previewElem],
                       showPreview, hidePreview, true);
   }
+
+  // Write an easter egg to the console with some info & ASCII art.
+  // Do it only in devices with big viewports, which are likely to
+  // be computers. It doesn't make sense in tablets/mobiles.
+  consoleSwag();
 }
 
 /**
@@ -502,7 +504,7 @@ function getMailPreview(done) {
   }
 }
 
-// Reference to the last hovered bioButton.
+// Reference to the last hovered button ('#bio > .buttons > a').
 var lastHovered;
 
 // Variable used to hold a reference to the last timeout set by
@@ -846,7 +848,7 @@ function consoleSwag() {
      '%cHi there, nice to meet you! %cIf you arrived here you\'re',
      '%cprobably a web developer like me. You can find the code',
      '%cin %chttps://www.github.com/eneko89/eneko.me%c. It supports',
-     '%cIE9+ and is crafted without using any client-side libs,',
+     '%cIE10+ and is crafted without using any client-side libs,',
      '%cembracing the latest CSS3/HTML5 and web API standards.',
      '%c ',
      '%cHiring?%c Write me to %ccontact@eneko.me%c!',
