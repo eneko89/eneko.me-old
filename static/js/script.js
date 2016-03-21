@@ -365,7 +365,7 @@ function getGithubPreview(done) {
  *                           and the Twitter API.    
  */
 function getTwitterPreview(done) {
-  var url = '/tweets?count=10';
+  var url = '/tweets?count=15';
 
   if (twitterPreview) {
     done(twitterPreview);
@@ -389,8 +389,9 @@ function getTwitterPreview(done) {
    * @return {String}       Generated tweet markup.
    */
   function tweetSpan(tweet) {
+    tweet.created_at = parseTwitterDate(tweet.created_at);
     return '<span class="tweet">'
-                + tweetAnchor(formattedDate(tweet.created_at),
+                + tweetAnchor(elapsedTimeString(tweet.created_at),
                               tweet.id_str)
                 + '<span class="icon">G</span>'
                 + tweet.favorite_count
@@ -418,43 +419,117 @@ function getTwitterPreview(done) {
   }
 
   /**
-   * Formats Twitter's date string into 'DD/MM/YYYY hh:mm' format.
+   * Parse Twitter's date string as UTC string (Twitter's format is
+   * non standard and some browser implementations of Date cannot
+   * parse it).
    *
    * @param  {String}  dateString  Twitter's date string.
    * 
-   * @return {String}              'DD/MM/YYYY hh:mm' date.
+   * @return {Date}                Parsed Date object.
    */
-  function formattedDate(dateString) {
+  function parseTwitterDate(dateString) {
     var arr = dateString.split(' ');
 
-    // Parse date as UTC string (Twitter's format is not standard
-    // and some browser implementations of Date can't parse it).
-    var date = new Date(arr[1] + ' '
-                         + arr[2] + ', '
-                         + arr[5] + ' '
-                         + arr[3] + ' UTC');
+    return new Date(arr[1] + ' '
+                     + arr[2] + ', '
+                     + arr[5] + ' '
+                     + arr[3] + ' UTC');
+  }
 
-    return prependZero(date.getDate()) + '/'
-            + prependZero(date.getMonth() + 1) + '/'
-            + date.getFullYear() + ' '
-            + prependZero(date.getHours()) + ':'
-            + prependZero(date.getMinutes());
+  /**
+   * Generates a readable elapsed time string that tells how many
+   * time has elapsed since 'date' until now. If more than 30 days
+   * have elapsed, generates a short date string. Output examples:
+   * '2 minutes ago', 'An hour ago', '3 days ago', '23 Feb'...
+   * 
+   * @param  {Date}    date  Date object.
+   * 
+   * @return {String}        A string with the elapsed time.
+   */
+  function elapsedTimeString(date) {
+
+    // Timne constants.
+    var SECS_IN_A_MINUTE = 60,
+        SECS_IN_AN_HOUR = SECS_IN_A_MINUTE * 60,
+        SECS_IN_A_DAY = SECS_IN_AN_HOUR * 24,
+        SECS_IN_A_MONTH = SECS_IN_A_DAY * 30;
+
+    // Date and time now.
+    var currentDate = new Date();
+    
+    // Time elapsed since 'date'.
+    var elapsed = (currentDate.getTime() / 1000)
+                  - (date.getTime() / 1000);
+
+    if (elapsed < SECS_IN_A_DAY) {
+
+      // Only a few seconds elapsed; that's virtually now.
+      if (elapsed < SECS_IN_A_MINUTE) {
+        return 'Now';
+      } else {
+
+        // Less than an hour elapsed; write time in minutes.
+        if (elapsed < SECS_IN_AN_HOUR) {
+          var mins = Math.round(elapsed / SECS_IN_A_MINUTE);
+          if (mins === 1) {
+            return 'A minute ago';
+          } else {
+            return  mins + ' minutes ago';
+          }
+        } else {
+
+          // Less than a day but more than an hour has elapsed,
+          // so we wirte elapsed time in hours.
+          var hours = Math.round(elapsed / SECS_IN_AN_HOUR);
+          if (hours === 1) {
+            return 'An hour ago';
+          } else {
+            return  hours + ' hours ago';
+          }
+        }
+      }
+    } else {
+      if (elapsed < SECS_IN_A_MONTH) {
+
+        // Less than a month but more than a day has elapsed,
+        // so we wirte elapsed time in days.
+        var days = Math.round(elapsed / SECS_IN_A_DAY);
+        if (hours === 1) {
+          return 'One day ago';
+        } else {
+          return  days + ' days ago';
+        }
+      } else {
+
+        // If more than 30 days have elapsed, write a short
+        // date representation (day + abbreviated month).
+        var shortDate = date.getDate() + ' '
+                        + getShortMonth(date.getMonth());
+
+        // If date is not from the current year, include year in
+        // the date also (day + abbreviated month + year).
+        if (currentDate.getFullYear() !== date.getFullYear()) {
+          shortDate += ' ' + date.getFullYear();
+        }
+        return shortDate;
+      }
+    }
 
     /**
-     * Prepends zero to a numeric value if it's smaller than 10.
+     * Returns the abbreviated name of the month corresponding to
+     * the index passed as parameter.
      * 
-     * @param  {Numer}          num  Number.
+     * @param  {Number}  month  Zero-based month index.
      * 
-     * @return {String|Number}       String with the number plus
-     *                               a leading zero if num < 10.
-     *                               Same numeric value otherwise.
-     *                               
+     * @return {String}         Abbreviated name of the month.
      */
-    function prependZero(num) {
-      return num < 10 ? '0' + num
-                      : num;
+    function getShortMonth(month) {
+      var months = ['Jan','Feb','Mar','Apr','May','Jun',
+                    'Jul','Aug','Sep','Oct','Nov', 'Dec'];
+      return months[month];
     }
   }
+
 }
 
 /**
