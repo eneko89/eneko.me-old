@@ -206,6 +206,10 @@ h1:after {
   padding: 0 1.3vh 0 1.3vh;
 }
 
+#preview.skills > div > span:last-of-type::after {
+  content: "";
+}
+
 #preview.github > div > .repo > .description {
   color: rgba(255,255,255,0.7);
   padding: 0 2vh 0 1vh;
