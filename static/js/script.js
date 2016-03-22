@@ -217,8 +217,7 @@ function rewrite(el, base, sentence, onEnd) {
       el.innerHTML = oldSentence.substring(0, i);
     } else {
       clearInterval(clk);
-      var randTime = 65 + (Math.random() * 15);
-      clk = setInterval(write, randTime);
+      clk = setInterval(write, 65);
     }
   }
 
