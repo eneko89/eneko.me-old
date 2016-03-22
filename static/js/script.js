@@ -410,6 +410,7 @@ function getTwitterPreview(done) {
   function tweetSpan(tweet) {
     tweet.created_at = parseTwitterDate(tweet.created_at);
     return '<span class="tweet">'
+                + '<span class="icon">I</span>'
                 + tweetAnchor(elapsedTimeString(tweet.created_at),
                               tweet.id_str)
                 + '<span class="icon">G</span>'
