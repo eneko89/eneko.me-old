@@ -3,7 +3,7 @@
  * File distributed under the MIT license.
  * 
  * Description:
- * Client side script.
+ * Client side scripts.
  */
 
 // HTML DOM Elements.
@@ -54,8 +54,8 @@ function scheduleRewrite() {
   }, 10000);
 }
 
-// Wait 10 seconds before starting to rotate sentences in h1 tag.
-setTimeout(scheduleRewrite, 10000);
+// Start h1 sentence rotation.
+scheduleRewrite();
 
 // Show biography and buttons.
 showBio();
@@ -205,8 +205,13 @@ function hideSkills() {
 function rewrite(el, base, sentence, onEnd) {
   var oldSentence = el.innerHTML,
       newSentence = base + sentence,
-      clk = setInterval(del, 60),
+      clk = setTimeout(del, DELETE_DELAY),
       i = oldSentence.length;
+
+  // Constant write & delete delays.
+  var DELETE_DELAY = 60,
+      WRITE_DELAY = 65,
+      BLANK_WRITE_DELAY = 90;
 
   /**
    * Deletes content in h1 periodically until it reaches 'base'.
@@ -215,9 +220,11 @@ function rewrite(el, base, sentence, onEnd) {
     i--;
     if (base.length <= i) {
       el.innerHTML = oldSentence.substring(0, i);
+      clearTimeout(clk);
+      clk = setTimeout(del, DELETE_DELAY);
     } else {
-      clearInterval(clk);
-      clk = setInterval(write, 65);
+      clearTimeout(clk);
+      clk = setTimeout(write, WRITE_DELAY);
     }
   }
 
@@ -227,9 +234,22 @@ function rewrite(el, base, sentence, onEnd) {
   function write() {
     i++;
     if (newSentence.length >= i) {
+      var delay;
+
+      // Write delays have a small random component. Also,
+      // before and after writing a blank space, delays are
+      // shightly longer. This makes the effect more natural.
+      if (newSentence.charAt(i-1) === ' '
+          || newSentence.charAt(i) === ' ') {
+        delay = BLANK_WRITE_DELAY + (Math.random() * 20);
+      } else {
+        delay = WRITE_DELAY + (Math.random() * 20);
+      }
       el.innerHTML = newSentence.substring(0, i);
+      clearTimeout(clk);
+      clk = setTimeout(write, delay);
     } else {
-      clearInterval(clk);
+      clearTimeout(clk);
       if (onEnd) {
         onEnd();
       }
