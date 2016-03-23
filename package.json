@@ -11,7 +11,10 @@
     "compression": "latest",
     "simple-time": "latest",
     "request": "latest",
-    "oauth-1.0a": "latest"
+    "oauth-1.0a": "latest",
+    "body-parser": "latest",
+    "nodemailer": "latest",
+    "xoauth2": "latest"
   },
   "devDependencies": {
     "gulp": "latest",
