@@ -316,6 +316,48 @@ function httpGet(url, onLoad) {
   }
 }
 
+/**
+ * Posts data as JSON to 'url' (HTTP POST through XMLHttpRequest).
+ * 
+ * @param  {String}   url       URL to hit.
+ * 
+ * @param  {Object}   data      Data to be sent as JSON.
+ *
+ * @param  {Function} [onLoad]  Called when the request completes
+ *                              with the signature onLoad(err, res),
+ *                              where res is the response and err
+ *                              null if request succeeded. Else, it
+ *                              will contain an HTTP errcode or -1.
+ */
+function httpPost(url, data, onLoad) {
+  var request = new XMLHttpRequest();
+
+  request.open('POST', url, true);
+
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      if (onLoad) {
+        onLoad(null, JSON.parse(request.responseText));
+      }
+    } else {
+      if (onLoad) {
+        onload(request.status);
+      }
+    }
+  };
+
+  request.onerror = function() {
+    if (onLoad) {
+      onLoad(-1);
+    }
+  }
+
+  request.setRequestHeader('Content-Type',
+                           'application/json; charset=UTF-8');
+
+  request.send(JSON.stringify(data));
+}
+
 // Previews that will be lazy-loaded and generated on demand by
 // getters below (getGitHubPreview(), getTwitterPreview() and so
 // forth).
