@@ -121,11 +121,11 @@ app.get('/tweets', function(req, res) {
 
 // Endpoint to send mails on behalf of the Gmail account defined in
 // nodemailer transporter's authentication service.
-app.get('/sendmail', function(req, res) {
+app.post('/sendmail', function(req, res) {
   gmTransporter.sendMail({
       from: 'contact@eneko.me',
       to: 'contact@eneko.me',
-      subject: '[eneko.me][From: '
+      subject: '[eneko.me] ['
                 + req.body.from + '] '
                 + req.body.subject,
       text: req.body.text
