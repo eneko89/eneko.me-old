@@ -515,7 +515,7 @@ function getTwitterPreview(done) {
         // Less than a month but more than a day has elapsed,
         // so we return elapsed time in days.
         var days = Math.round(elapsed / SECS_IN_A_DAY);
-        if (hours === 1) {
+        if (days === 1) {
           return 'One day ago';
         } else {
           return  days + ' days ago';
