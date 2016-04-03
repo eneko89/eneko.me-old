@@ -411,7 +411,7 @@ function getTwitterPreview(done) {
     tweet.created_at = parseTwitterDate(tweet.created_at);
     return '<span class="tweet">'
                 + '<span class="icon">I</span>'
-                + tweetAnchor(elapsedTimeString(tweet.created_at),
+                + tweetAnchor(readableTimestamp(tweet.created_at),
                               tweet.id_str)
                 + '<span class="icon">G</span>'
                 + tweet.favorite_count
@@ -457,16 +457,16 @@ function getTwitterPreview(done) {
   }
 
   /**
-   * Generates a readable elapsed time string that tells how many
-   * time has elapsed since 'date' until now. If more than 30 days
-   * have elapsed, generates a short date string. Output examples:
+   * Generates a human readable timestamp that tells how many time
+   * has elapsed since 'date' until now. If more than 30 days have
+   * elapsed, generates a short date string. Some output examples:
    * '2 minutes ago', 'An hour ago', '3 days ago', '23 Feb'...
    * 
    * @param  {Date}    date  Date object.
    * 
    * @return {String}        A string with the elapsed time.
    */
-  function elapsedTimeString(date) {
+  function readableTimestamp(date) {
 
     // Time constants.
     var SECS_IN_A_MINUTE = 60,
@@ -485,7 +485,7 @@ function getTwitterPreview(done) {
 
       // Only a few seconds have elapsed; that's virtually now.
       if (elapsed < SECS_IN_A_MINUTE) {
-        return 'Now';
+        return 'Just now';
       } else {
 
         // Less than an hour has elapsed, so we return elapsed
