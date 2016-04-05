@@ -411,7 +411,7 @@ function getTwitterPreview(done) {
     tweet.created_at = parseTwitterDate(tweet.created_at);
     return '<span class="tweet">'
                 + '<span class="icon">I</span>'
-                + tweetAnchor(readableTimestamp(tweet.created_at),
+                + tweetAnchor(readableTime(tweet.created_at),
                               tweet.id_str)
                 + '<span class="icon">G</span>'
                 + tweet.favorite_count
@@ -466,7 +466,7 @@ function getTwitterPreview(done) {
    * 
    * @return {String}        A string with the elapsed time.
    */
-  function readableTimestamp(date) {
+  function readableTime(date) {
 
     // Time constants.
     var SECS_IN_A_MINUTE = 60,
@@ -516,7 +516,7 @@ function getTwitterPreview(done) {
         // so we return elapsed time in days.
         var days = Math.round(elapsed / SECS_IN_A_DAY);
         if (days === 1) {
-          return 'One day ago';
+          return 'A day ago';
         } else {
           return  days + ' days ago';
         }
