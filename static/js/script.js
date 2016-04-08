@@ -359,7 +359,7 @@ function getGithubPreview(done) {
    */
   function repoSpan(repo) {
     return '<span class="repo">'
-                + anchor(repo.name, repo.html_url)
+                + anchor(repo.html_url, repo.name)
                 + '<span class="icon">G</span>'
                 + repo.stargazers_count
                 + '<span class="icon">F</span>'
@@ -409,6 +409,7 @@ function getTwitterPreview(done) {
    */
   function tweetSpan(tweet) {
     tweet.created_at = parseTwitterDate(tweet.created_at);
+
     return '<span class="tweet">'
                 + '<span class="icon">I</span>'
                 + tweetAnchor(readableTime(tweet.created_at),
@@ -424,8 +425,8 @@ function getTwitterPreview(done) {
   }
 
   /**
-   * Creates an anchor linking to a @enekodev user's tweet from a
-   * tweet id and an anchor text.
+   * Creates an anchor linking to a @enekodev user's tweet from a tweet
+   * id and an anchor text.
    *
    * @param  {String}  text  Anchor text.
    *
@@ -434,8 +435,53 @@ function getTwitterPreview(done) {
    * @return {String}        Generated anchor tag.
    */
   function tweetAnchor(text, id) {
-    return anchor(text,
-                  'https://twitter.com/enekodev/status/' + id);
+    return anchor('https://twitter.com/enekodev/status/' + id, text);
+  }
+
+  /**
+   * Looks for URLs, Twitter users and hashtags in the source text and
+   * replaces them with anchor tags. If there are no links in the text,
+   * it does nothing.
+   * 
+   * @param  {String}  text  Source text.
+   * 
+   * @return {String}        New string with URLs, Twitter users and
+   *                         hashtags in the source text replaced with
+   *                         anchor tags.
+   */
+  function anchorify(text) {
+    var urlRegExp = /(https?:\/\/[^\s]+)/g,
+        hashtagRegExp = /(#\w+)/g,
+        userRegExp = /(@\w{1,15})/g;
+
+    return text.replace(urlRegExp, anchor)
+               .replace(hashtagRegExp, hashtagAnchor)
+               .replace(userRegExp, userAnchor);
+
+    /**
+     * Creates an anchor linking to a twitter hashtag with the hashtag
+     * as anchor text.
+     * 
+     * @param  {String}  hashtag  Twitter hashtag, e.g. '#bcn'.
+     * 
+     * @return {String}           Generated anchor tag.
+     */
+    function hashtagAnchor(hashtag) {
+      return anchor('https://twitter.com/hashtag/' + hashtag.slice(1),
+                    hashtag);
+    }
+
+    /**
+     * Creates an anchor linking to a Twitter user with the user as
+     * anchor text.
+     * 
+     * @param  {String}  user  Twitter user, e.g. '@enekodev'.
+     * 
+     * @return {String}        Generated anchor tag.
+     */
+    function userAnchor(user) {
+      return anchor('https://twitter.com/' + user.slice(1), user);
+    }
   }
 
   /**
@@ -597,7 +643,7 @@ function getMailPreview(done) {
    * @return {String}         Generated anchor tag.
    */
   function mailAnchor(email) {
-    return anchor(email, 'mailto:' + email);
+    return anchor('mailto:' + email, email);
   }
 }
 
@@ -895,31 +941,16 @@ function toUpperFirst(str) {
 
 /**
  * Creates an anchor tag from the URL and anchor text as params.
- *
- * @param  {String}  text  Anchor text.
+ * If text is not provided, the URL will be used as anchor text.
  * 
- * @param  {String}  url   Anchor URL.
+ * @param  {String}  url     Anchor URL.
  * 
- * @return {String}        Generated anchor tag.
+ * @param  {String}  [text]  Anchor text.
+ * 
+ * @return {String}          Generated anchor tag.
  */
-function anchor(text, url) {
-  return '<a href="' + url + '">' + text + '</a>';
-}
-
-/**
- * Looks for URLs in the source text and replaces them with anchor
- * tags. If there are no links in the text, it does nothing.
- * 
- * @param  {String}  text  Source text.
- * 
- * @return {String}        New string with URLs in the source
- *                         text replaced with anchor tags.
- */
-function anchorify(text) {
-  var urlRegExp = /(https?:\/\/[^\s]+)/g;
-  return text.replace(urlRegExp, function(url) {
-      return anchor(url, url);
-  });
+function anchor(url, text) {
+  return '<a href="' + url + '">' + (text ? text : url) + '</a>';
 }
 
 /**
