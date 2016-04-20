@@ -122,20 +122,36 @@ app.get('/tweets', function(req, res) {
 // Endpoint to send mails on behalf of the Gmail account defined in
 // nodemailer transporter's authentication service.
 app.post('/sendmail', function(req, res) {
-  gmTransporter.sendMail({
+  if (isValidMail(req.body.from)) {
+    gmTransporter.sendMail({
       from: 'contact@eneko.me',
       to: 'contact@eneko.me',
       subject: '[eneko.me] ['
                 + req.body.from + '] '
                 + req.body.subject,
       text: req.body.text
-  }, function(error, resp) {
-     if (error) {
-        res.status(500).send({ error: 'Something blew up...' });
-     } else {
-        res.send();
-     }
-  });
+    }, function(error, resp) {
+       if (error) {
+          res.status(500).send({ error: 'Something blew up...' });
+       } else {
+          res.send();
+       }
+    });
+  } else {
+    res.status(400).send({ error: 'Wrong e-mail address.' });
+  }
+
+  /**
+   * Validates an e-mail address.
+   * 
+   * @param  {String}  email  E-mail address.
+   * 
+   * @return {Boolean}        True if valid, false otherwise.
+   */
+  function isValidMail(email) {
+    var mailRegExp = /^.+@.+\..+$/;
+    return mailRegExp.test(email);
+  }
 });
 
 // Reply with a 404 if nothing previously matches.
