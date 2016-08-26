@@ -7,15 +7,22 @@
  */
 
 // HTML DOM Elements.
-var content = document.getElementsByClassName('content')[0];
+var content = document.getElementsByClassName('content')[0],
     bio = document.getElementById('bio'),
+    mail = document.getElementById('mail'),
     h1 = document.getElementsByTagName('h1')[0],
     skills = document.getElementById('skills'),
     skillElems = document.querySelectorAll('#skills > span'),
     skillsButton = document.querySelectorAll('.buttons > .skills')[0],
     backButton = document.querySelectorAll('.buttons > .back')[0],
+    mailButton = document.querySelectorAll('.buttons > .mail')[0],
+    mailBackButton = document.querySelectorAll('#mail button.back')[0],
+    mailSubmitButton = document.querySelectorAll('#mail button.submit')[0],
     previewElem = document.getElementById('preview'),
-    bioButtons = document.querySelectorAll('#bio > .buttons > a');
+    bioButtons = document.querySelectorAll('#bio > .buttons > a'),
+    mailSubjectInput = document.querySelectorAll('input[name="subject"]')[0],
+    mailAddrInput = document.querySelectorAll('input[name="from"]')[0],
+    mailMsgTextArea = document.querySelectorAll('textarea[name="text"]')[0];
 
 // True if the viewport is wide enough for previews of the anchor buttons
 // in '#bio > .buttons', which should be available only for wide viewports
@@ -63,12 +70,30 @@ showBio();
 // Add listeners for the "Skills" and "Back" buttons.
 skillsButton.addEventListener('click', function(event) {
   event.preventDefault();
-  showSkills();
+  transition(bio, skills);
 });
 
 backButton.addEventListener('click', function(event) {
   event.preventDefault();
-  hideSkills();
+  transition(skills, bio);
+});
+
+mailButton.addEventListener('click', function(event) {
+  event.preventDefault();
+  transition(bio, mail);
+});
+
+mailBackButton.addEventListener('click', function(event) {
+  event.preventDefault();
+  transition(mail, bio);
+});
+
+mailSubmitButton.addEventListener('click', function(event) {
+  httpPost('/sendmail', {
+    subject: mailSubjectInput.value,
+    from: mailAddrInput.value,
+    text: mailMsgTextArea.value
+  });
 });
 
 // Attach preview listeners to anchors in '#bio > .buttons' only
@@ -101,76 +126,80 @@ function showBio() {
 }
 
 /**
- * Triggers some CSS transitions to hide #bio and show #skills.
+ * Transition between elements that make up navigable views, hiding
+ * an element and showing another. Changes are animated through CSS
+ * transitions.
+ *
+ * The '#skills' view is an special case, as its animation involves
+ * animating each of the skills under '#skills > span' one by one.
+ * 
+ * @param  {Element}  elemToHide  Element to be hidden.
+ * 
+ * @param  {Element}  elemToShow  Element to be shown.
  */
-function showSkills() {
+function transition(elemToHide, elemToShow) {
 
-  // Hide biography removing its .show class.
-  bio.className = '';
+  if (elemToHide === skills) {
 
-  // Wait 600ms while the dissapearing animation of the 
-  // biography completes.
-  setTimeout(function() {
+    // Hide back button removing its .show class.
+    backButton.className = 'back';
 
-    // Hide bio and show skills.
-    bio.style.display = 'none';
-    skills.style.display = 'block';
-
-    // Start making skill spans appear with
-    // a random delay between 10 and 300ms.
+    // Start making skill spans dissappear with a random
+    // delay between 10 and 300ms.
     for (var i = 0; i < skillElems.length; i++) {
       var skill = skillElems[i];
-      showSkill(skill);
+      setSkillClassName(skill, '');
     }
+  } else {
 
-    // Wait 600ms to let the previous animation complete and
-    // display the back button setting .show class to it.
-    setTimeout(function() {
-      backButton.className = 'back show';
-    }, 600);
-
-  }, 500);
-
-  function showSkill(skill) {
-    setTimeout(function() {
-      skill.className = 'show';
-    }, (Math.random() * 290) + 10);
-  }
-}
-
-/**
- * Triggers some CSS transitions to hide #skills and show #bio.
- */
-function hideSkills() {
-
-  // Hide back button removing its .show class.
-  backButton.className = 'back';
-
-  // Start making skill spans dissappear with
-  // a random delay between 10 and 300ms.
-  for (var i = 0; i < skillElems.length; i++) {
-    var skill = skillElems[i];
-    hideSkill(skill);
+    // Hide elemToHide removing its .show class.
+    elemToHide.className = '';
   }
 
-  // Wait 650ms while the dissapearing animation of the skill
-  // spans completes.
+  // Wait 500ms while the dissapearing animation of the 
+  // 'elemToHide' completes.
   setTimeout(function() {
 
-    // Hide skills and display bio.
-    skills.style.display = 'none';
-    bio.style.display = 'block';
+    // Hide 'elemToHide' and show 'elemToShow'.
+    elemToHide.style.display = 'none';
+    elemToShow.style.display = 'block';
 
-    // Add .show class to make biography appear. Wait 100ms
-    // first to avoid browser skipping the animation.
-    setTimeout(function() {
-      bio.className = 'show';
-    }, 100);
-  }, 650);
+    if (elemToShow === skills) {
 
-  function hideSkill(skill) {
+      // Start making skill spans appear with a random
+      // delay between 10 and 300ms.
+      for (var i = 0; i < skillElems.length; i++) {
+        var skill = skillElems[i];
+        setSkillClassName(skill, 'show');
+      }
+
+      // Wait 600ms to let the previous animation complete
+      // and display the back button setting '.show' class
+      // to it.
+      setTimeout(function() {
+        backButton.className = 'back show';
+      }, 600);
+    } else {
+
+      // Add .show class to make elemToShow appear. Wait 
+      // 100ms to avoid browser skipping the animation.
+      setTimeout(function() {
+        elemToShow.className = 'show';
+      }, 100);
+    }
+  }, 500);
+
+  /**
+   * Sets the classname of the 'skill' element after
+   * a random delay between 10 and 300 milliseconds.
+   * 
+   * @param  {Element}  skill      Skill element.
+   * 
+   * @param  {String}   className  CSS classname.
+   */
+  function setSkillClassName(skill, className) {
     setTimeout(function() {
-      skill.className = '';
+      skill.className = className;
     }, (Math.random() * 290) + 10);
   }
 }
