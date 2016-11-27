@@ -387,12 +387,12 @@ h1:after {
 
 #mail input {
   width: 49%;
-  height: 4.4vh;
-  background: rgba(255, 255, 255, 0.05);
+  height: 4.6vh;
+  background: rgba(255, 255, 255, 0.04);
   border: 0.34vh solid rgba(255, 255, 255, 0.6);
-  font-size: 2.1vh;
+  font-size: 2vh;
   color: rgba(255, 255, 255, 0.6);
-  padding: 1vh;
+  padding: 1vh 1.2vh;
 }
 
 #mail input:nth-of-type(2) {
@@ -405,13 +405,13 @@ h1:after {
 
 #mail textarea {
   width: 100%;
-  margin-top: 2%;
+  margin-top: 2.2%;
   height: 12vh;
   border: 0.34vh solid rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 2.1vh;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 2vh;
   color: rgba(255, 255, 255, 0.6);
-  padding: 0.7vh 1.1vh;
+  padding: 0.8vh 1.2vh;
   resize: none;
   font-family: "Noto Sans", sans-serif;
 }
@@ -419,7 +419,7 @@ h1:after {
 #mail button {
   float: right;
   cursor: pointer;
-  margin-top: 2%;
+  margin-top: 2.2%;
   color: #ffffff;
   background-color: transparent;
   text-align: center;
