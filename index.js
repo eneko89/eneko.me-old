@@ -10,6 +10,7 @@ var express = require('express'),
     path = require('path'),
     time = require('simple-time'),
     request = require('request'),
+    crypto = require('crypto'),
     OAuth = require('oauth-1.0a');
 
 // Express app and global middleware.
@@ -20,14 +21,19 @@ var app = express(),
 // Twitter OAuth API token, consumer key and secrets.
 var twOAuth = OAuth({
     consumer: {
-        public: process.env.TW_CONSUMER_KEY,
+        key: process.env.TW_CONSUMER_KEY,
         secret: process.env.TW_CONSUMER_SECRET
     },
-    signature_method: 'HMAC-SHA1'
+    signature_method: 'HMAC-SHA1',
+    hash_function(base_string, key) {
+        return crypto.createHmac('sha1', key)
+                     .update(base_string)
+                     .digest('base64')
+    }
 });
 
 var twToken = {
-    public: process.env.TW_TOKEN,
+    key: process.env.TW_TOKEN,
     secret: process.env.TW_TOKEN_SECRET,
 };
 
