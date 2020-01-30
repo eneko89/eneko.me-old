@@ -28,13 +28,12 @@ var base = 'I\'m Eneko, ';
 // Sentences that will rotate in h1 tag.
 var sentences = [
   'software engineer',
-  'web dev at SmartSea',
+  'web developer',
   'JS and Node hacker',
   'computer geek',
   'code craftsman',
   'UX and UI designer',
-  'problem solver',
-  'basque citizen'
+  'problem solver'
 ];
 
 // Sentence rotation counter.
