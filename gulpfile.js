@@ -21,7 +21,7 @@ gulp.task('default', run);
  *                      makes this task asynchronous.
  */
 function run(cb) {
-  dotenv.load();
+  dotenv.config();
   var proc = childProcess.exec('node .', cb);
   proc.stdout.on('data', function (d) { process.stdout.write(d); });
   proc.stderr.on('data', function (d) { process.stderr.write(d); });
