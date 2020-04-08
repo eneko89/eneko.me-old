@@ -8,7 +8,6 @@
 
 var express = require('express'),
     path = require('path'),
-    time = require('simple-time'),
     request = require('request'),
     crypto = require('crypto'),
     OAuth = require('oauth-1.0a');

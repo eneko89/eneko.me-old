@@ -4,5 +4,6 @@ node_modules
 # Local environment variables
 .env
 
-# Windows folder config file
+# Win & MacOS folder config files
 Desktop.ini
+.DS_Store
